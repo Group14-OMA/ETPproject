@@ -14,7 +14,6 @@ public class Chromosome {
     }
 
     public Integer getObjFunc() {
-
         return objFunc;
     }
 
