@@ -9,6 +9,7 @@ public class Main {
     public static void main(String[] args) {
         // write your code here
         //questo metodo fa schifo , non so se fermi i vari thread
+
         try {
 
             if (args.length < 3) {
@@ -31,8 +32,12 @@ public class Main {
                 }
             }, time);
 
+            Input OMAinput=new Input(args[0]);
 
-            while (true) ;
+
+
+
+
         } catch (NumberFormatException nfe) {
             System.out.println("The third argument must be a number");
             System.exit(1);
@@ -45,6 +50,7 @@ public class Main {
             System.exit(1);
         } catch (InsertTime insertTime) {
             System.out.println("Tip:Try again with -t");
+            System.exit(1);
         }
 
     }
