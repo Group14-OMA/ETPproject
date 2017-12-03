@@ -4,20 +4,23 @@ import java.util.ArrayList;
 
 public class Chromosome {
 
-    private Integer objFunc;
+    private Double objFunc;
+    private Integer tmax;
     private ArrayList<Integer> timeSlotList;
-    private ArrayList<ArrayList<Integer>> chromosomeList;
+    private ArrayList<ArrayList<Integer>> geneList;
 
-    public Chromosome(ArrayList<Integer> timeSlotList, ArrayList<ArrayList<Integer>> chromosomeList) {
+    public Chromosome(ArrayList<Integer> timeSlotList, ArrayList<ArrayList<Integer>> geneList, Integer tmax) {
         this.timeSlotList = timeSlotList;
-        this.chromosomeList = chromosomeList;
+        this.geneList = geneList;
+        this.tmax = tmax;
+
     }
 
-    public Integer getObjFunc() {
+    public Double getObjFunc() {
         return objFunc;
     }
 
-    public void setObjFunc(Integer objFunc) {
+    public void setObjFunc(Double objFunc) {
         this.objFunc = objFunc;
     }
 
@@ -29,11 +32,19 @@ public class Chromosome {
         this.timeSlotList = timeslotList;
     }
 
-    public ArrayList<ArrayList<Integer>> getChromosomeList() {
-        return chromosomeList;
+    public ArrayList<ArrayList<Integer>> getGeneList() {
+        return geneList;
     }
 
-    public void setChromosomeList(ArrayList<ArrayList<Integer>> chromosomeList) {
-        this.chromosomeList = chromosomeList;
+    public ArrayList<Integer> getGene(Integer i){
+        return geneList.get(i);
+    }
+
+    public void setGeneList(ArrayList<ArrayList<Integer>> geneList) {
+        this.geneList = geneList;
+    }
+
+    public Integer getTmax() {
+        return tmax;
     }
 }

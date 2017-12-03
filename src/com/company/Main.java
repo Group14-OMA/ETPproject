@@ -47,6 +47,43 @@ public class Main {
             System.out.println("Tip:Try again with -t");
         }
 
+
+        //commented code was used for testing ObjectiveFunction.
+
+        /*Integer[][] C = new Integer[4][4];
+
+        for(int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++)
+                C[i][j] = 0;
+        }
+        C[0][1] = 2;
+        C[0][2] = 3;
+        C[1][0] = 2;
+        C[1][2] = 2;
+        C[2][0] = 3;
+        C[2][1] = 2;
+
+        ArrayList<ArrayList<Integer>>geneList = new ArrayList<>();
+        ArrayList<Integer> gene1 = new ArrayList<>();
+        gene1.add(1);
+        gene1.add(4);
+        geneList.add(gene1);
+        geneList.add(null);
+        ArrayList<Integer> gene2 = new ArrayList<>();
+        gene2.add(2);
+        geneList.add(gene2);
+        geneList.add(null);
+        geneList.add(null);
+        ArrayList<Integer> gene3 = new ArrayList<>();
+        gene3.add(3);
+        geneList.add(gene3);
+
+        Chromosome chromosome = new Chromosome(null, geneList, 6);
+        ObjectiveFunction of = new ObjectiveFunction();
+        System.out.println(of.calculateObjectiveFunction(chromosome, 6, 8, C));*/
+
+
+
     }
 }
 class TimeTooLow extends Exception { }
