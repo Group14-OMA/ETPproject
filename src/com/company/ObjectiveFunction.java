@@ -25,6 +25,6 @@ public class ObjectiveFunction {
 
         }
 
-        return value/8;
+        return value/chromosome.getStudentNum();
     }
 }

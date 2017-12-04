@@ -6,14 +6,18 @@ public class Chromosome {
 
     private Double objFunc;
     private Integer tmax;
-    private ArrayList<Integer> timeSlotList;
-    private ArrayList<ArrayList<Integer>> geneList;
+    private Integer examNum;
+    private Integer studentNum;
+    private Integer[] timeSlotList;
+    private ArrayList<Integer>[] geneList;
 
-    public Chromosome(ArrayList<Integer> timeSlotList, ArrayList<ArrayList<Integer>> geneList, Integer tmax) {
+
+    public Chromosome(Integer tmax, Integer examNum, Integer studentNum, Integer[] timeSlotList, ArrayList<Integer>[] geneList) {
+        this.tmax = tmax;
+        this.examNum = examNum;
+        this.studentNum = studentNum;
         this.timeSlotList = timeSlotList;
         this.geneList = geneList;
-        this.tmax = tmax;
-
     }
 
     public Double getObjFunc() {
@@ -24,27 +28,36 @@ public class Chromosome {
         this.objFunc = objFunc;
     }
 
-    public ArrayList<Integer> getTimeslotList() {
+    public Integer[] getTimeSlotList() {
         return timeSlotList;
     }
 
-    public void setTimeslotList(ArrayList<Integer> timeslotList) {
-        this.timeSlotList = timeslotList;
+    public void setTimeSlotList(Integer[] timeSlotList) {
+        this.timeSlotList = timeSlotList;
     }
 
-    public ArrayList<ArrayList<Integer>> getGeneList() {
+    public ArrayList<Integer>[] getGeneList() {
         return geneList;
     }
 
-    public ArrayList<Integer> getGene(Integer i){
-        return geneList.get(i);
-    }
-
-    public void setGeneList(ArrayList<ArrayList<Integer>> geneList) {
+    public void setGeneList(ArrayList<Integer>[] geneList) {
         this.geneList = geneList;
     }
 
     public Integer getTmax() {
         return tmax;
+    }
+
+    public Integer getExamNum() {
+        return examNum;
+    }
+
+    public Integer getStudentNum() {
+        return studentNum;
+    }
+
+
+    public ArrayList<Integer> getGene(Integer i){
+        return geneList[i];
     }
 }
