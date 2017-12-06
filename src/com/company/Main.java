@@ -85,10 +85,10 @@ public class Main {
         geneList[5]= gene3;
 
         Chromosome chromosome = new Chromosome(6, 4,8,null,geneList);
-        ObjectiveFunction of = new ObjectiveFunction();
-        System.out.println(of.calculateObjectiveFunction(chromosome, 6, 8, C));
+        chromosome.updateObjectiveFunction(C);
+        System.out.println(chromosome.getObjFunc());*/
 
-        */
+
 
     }
 }
