@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class Chromosome {
 
     private Double objFunc;
+    private Double fitness;
     private Integer tmax;
     private Integer examNum;
     private Integer studentNum;
@@ -57,7 +58,36 @@ public class Chromosome {
     }
 
 
+    public Double getFitness() {
+        return fitness;
+    }
+
+    public void setFitness(Double fitness) {
+        this.fitness = fitness;
+    }
+
+
     public ArrayList<Integer> getGene(Integer i){
         return geneList[i];
+    }
+
+    public void updateObjectiveFunction(Integer C[][]){
+        Double value = 0.0;
+
+        for(Integer i = 0; i < this.tmax; i++){
+            ArrayList<Integer> exams = this.getGene(i);
+            if(exams != null)
+                for(Integer exam : exams){
+                    for(Integer j = i+1; j < i+6 && j < tmax; j++){
+                        if(this.getGene(j)!= null)
+                            for(Integer exam2 : this.getGene(j)){
+                                value += C[exam-1][exam2-1] * Math.pow(2, (5-(j-i)));
+                            }
+                    }
+                }
+
+        }
+
+        this.objFunc = value/this.studentNum;
     }
 }
