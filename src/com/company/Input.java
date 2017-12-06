@@ -23,6 +23,7 @@ public class Input {
     public Input(String instanceName) {
         //The name of the istance must be used to get the 3 files
     this.instanceName=instanceName;
+    studentNumber=0;
     timeslots =TimeSlotsReader(instanceName+".slo");
     examNumber =ExamReader(instanceName+".exm");
     conflictMatrix =new Integer[examNumber][examNumber];
@@ -84,15 +85,20 @@ public class Input {
 
     private void StudentReader(String file) {
             String line;
-            LinkedList<String> [] studentXExam= new LinkedList[examNumber]; //Array di linked list per costruire Cee'
-            String previousStudent= null ;
+            //Array di linked list per costruire Cee' , ogni lista va inizializzata
+            LinkedList<String>[] studentXExam= new LinkedList[examNumber];
+            String previousStudent="" ;
 
-            studentNumber =0;
+
+
+            //studentXExam init
+            for(int j=0;j<examNumber;j++) studentXExam[j]=new LinkedList<>();
 
             try {
 
                 FileReader filereader = new FileReader(file);
                 BufferedReader bufferedreader = new BufferedReader(filereader);
+
 
                 while ((line = bufferedreader.readLine()) != null) {
                    String parts[] =line.split(" ");
@@ -103,7 +109,10 @@ public class Input {
                    }
 
                     /* Costruisco l'array degli studenti, aggiungo nella posizione x-1 (l'esame parte da 1) lo studente sX */
+
+
                     int IndiceEsame=(Integer.valueOf(parts[1]))-1;
+                    System.out.println(parts[0]+"/" + parts[1] + "->" + IndiceEsame);
                     studentXExam[IndiceEsame].add(parts[0]);
 
                 }
@@ -115,10 +124,11 @@ public class Input {
 
                         //Molto poco ottimizzato, si può usare anche RetainAll
                         else {
-                        Set<String> Collisions=new HashSet<String> ();
-                        Collisions.addAll(studentXExam[i]);
-                        Collisions.addAll(studentXExam[j]);
-                        conflictMatrix[i][j]=Collisions.size();
+                            //questo set è una copia del primo
+                        Set<String> collisions=new HashSet<> (studentXExam[i]);
+                        collisions.retainAll(studentXExam[j]); // mantiene solo gli elementi che ci sono in entrambe
+
+                        conflictMatrix[i][j]=collisions.size();
 
                         }
 

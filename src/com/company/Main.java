@@ -9,6 +9,7 @@ public class Main {
     public static void main(String[] args) {
         // write your code here
         //questo metodo fa schifo , non so se fermi i vari thread
+        Input inputProject;
 
         try {
 
@@ -22,9 +23,13 @@ public class Main {
             //Timer setting
             Timer timer = new Timer();
             long time = Long.valueOf(args[2]) * 1000; //To have the timer in seconds
+
             if (time <= 0) {
                 throw new TimeTooLow();
             }
+
+            //Timer is off atm
+            /*
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
@@ -32,8 +37,7 @@ public class Main {
                 }
             }, time);
 
-            Input OMAinput=new Input(args[0]);
-
+            */
 
 
 
@@ -52,6 +56,24 @@ public class Main {
             System.out.println("Tip:Try again with -t");
             System.exit(1);
         }
+
+        System.out.println("Passing " + args[0]);
+        inputProject=new Input(args[0]);
+        //Test dell'input
+        System.out.println("This is the input for the instance " + inputProject.getInstanceName());
+        System.out.println("The number of exams is: " + inputProject.getExamNumber().toString());
+        System.out.println("The number of students is " + inputProject.getStudentNumber().toString());
+        System.out.println("The number of timeslots is " + inputProject.getTimeslots().toString());
+
+        System.out.println("The conflict matrix is: ");
+        Integer [][] cmatrix=inputProject.getConflictMatrix();
+        for(Integer[] row:cmatrix) {
+            System.out.println(Arrays.toString(row));
+        }
+
+
+
+
 
 
         //commented code was used for testing ObjectiveFunction.
