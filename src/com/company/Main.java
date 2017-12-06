@@ -10,7 +10,7 @@ public class Main {
         // write your code here
         //questo metodo fa schifo , non so se fermi i vari thread
 
-        /*try {
+        try {
 
             if (args.length < 3) {
                 throw new InvalidArgumentNumber();
@@ -51,12 +51,12 @@ public class Main {
         } catch (InsertTime insertTime) {
             System.out.println("Tip:Try again with -t");
             System.exit(1);
-        }*/
+        }
 
 
         //commented code was used for testing ObjectiveFunction.
 
-        Integer[][] C = new Integer[4][4];
+        /*Integer[][] C = new Integer[4][4];
 
         for(int i = 0; i < 4; i++) {
             for (int j = 0; j < 4; j++)
@@ -88,7 +88,7 @@ public class Main {
         ObjectiveFunction of = new ObjectiveFunction();
         System.out.println(of.calculateObjectiveFunction(chromosome, 6, 8, C));
 
-
+        */
 
     }
 }

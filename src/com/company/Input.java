@@ -12,21 +12,21 @@ public class Input {
 
 
 
-
-    private Integer Timeslots;
-    private Integer StudentNumber;
-    private Integer ExamNumber;
-    private Integer [] [] ConflictMatrix;
+    private String instanceName;
+    private Integer timeslots;
+    private Integer studentNumber;
+    private Integer examNumber;
+    private Integer [] [] conflictMatrix;
 
    // private String
 
-    public Input(String InstanceName) {
+    public Input(String instanceName) {
         //The name of the istance must be used to get the 3 files
-
-    Timeslots=TimeSlotsReader(InstanceName+".slo");
-    ExamNumber=ExamReader(InstanceName+".exm");
-    ConflictMatrix=new Integer[ExamNumber][ExamNumber];
-    StudentReader(InstanceName + ".stu");
+    this.instanceName=instanceName;
+    timeslots =TimeSlotsReader(instanceName+".slo");
+    examNumber =ExamReader(instanceName+".exm");
+    conflictMatrix =new Integer[examNumber][examNumber];
+    StudentReader(instanceName + ".stu");
 
     }
 
@@ -58,6 +58,9 @@ public class Input {
         return slots;
     }
 
+    public String getInstanceName() {
+        return instanceName;
+    }
 
     private Integer ExamReader(String file) {
         String line;
@@ -81,10 +84,10 @@ public class Input {
 
     private void StudentReader(String file) {
             String line;
-            LinkedList<String> [] StudentXExam= new LinkedList[ExamNumber]; //Array di linked list per costruire Cee'
-            String PreviousStudent= null ;
+            LinkedList<String> [] studentXExam= new LinkedList[examNumber]; //Array di linked list per costruire Cee'
+            String previousStudent= null ;
 
-            StudentNumber=0;
+            studentNumber =0;
 
             try {
 
@@ -94,28 +97,28 @@ public class Input {
                 while ((line = bufferedreader.readLine()) != null) {
                    String parts[] =line.split(" ");
                    //Conto gli Studenti
-                   if(!parts[0].equals(PreviousStudent)) {
-                       StudentNumber++;
-                       PreviousStudent=parts[0];
+                   if(!parts[0].equals(previousStudent)) {
+                       studentNumber++;
+                       previousStudent=parts[0];
                    }
 
                     /* Costruisco l'array degli studenti, aggiungo nella posizione x-1 (l'esame parte da 1) lo studente sX */
                     int IndiceEsame=(Integer.valueOf(parts[1]))-1;
-                    StudentXExam[IndiceEsame].add(parts[0]);
+                    studentXExam[IndiceEsame].add(parts[0]);
 
                 }
 
-                for(int i=0; i< ExamNumber ; i++) {
-                    for (int j=0;j< ExamNumber; j++) {
+                for(int i = 0; i< examNumber; i++) {
+                    for (int j = 0; j< examNumber; j++) {
                         //Essendo la matrice upperTriangular ho pensato di mettere 0 direttamente
-                        if(i>=j) ConflictMatrix[i][j]=0;
+                        if(i>=j) conflictMatrix[i][j]=0;
 
                         //Molto poco ottimizzato, si può usare anche RetainAll
                         else {
                         Set<String> Collisions=new HashSet<String> ();
-                        Collisions.addAll(StudentXExam[i]);
-                        Collisions.addAll(StudentXExam[j]);
-                        ConflictMatrix[i][j]=Collisions.size();
+                        Collisions.addAll(studentXExam[i]);
+                        Collisions.addAll(studentXExam[j]);
+                        conflictMatrix[i][j]=Collisions.size();
 
                         }
 
@@ -131,18 +134,18 @@ public class Input {
 
         }
     public Integer[][] getConflictMatrix() {
-        return ConflictMatrix;
+        return conflictMatrix;
     }
 
     public Integer getTimeslots() {
-        return Timeslots;
+        return timeslots;
     }
 
     public Integer getStudentNumber() {
-        return StudentNumber;
+        return studentNumber;
     }
 
     public Integer getExamNumber() {
-        return ExamNumber;
+        return examNumber;
     }
 }
