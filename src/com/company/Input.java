@@ -119,8 +119,8 @@ public class Input {
 
                 for(int i = 0; i< examNumber; i++) {
                     for (int j = 0; j< examNumber; j++) {
-                        //Essendo la matrice upperTriangular ho pensato di mettere 0 direttamente
-                        if(i>=j) conflictMatrix[i][j]=0;
+
+                        if(i==j) conflictMatrix[i][j]=0;
 
                         //Molto poco ottimizzato, si può usare anche RetainAll
                         else {

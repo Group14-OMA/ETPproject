@@ -111,7 +111,7 @@ public class Main {
         System.out.println(chromosome.getObjFunc());*/
 
 
-
+        System.exit(0);
     }
 }
 class TimeTooLow extends Exception { }
