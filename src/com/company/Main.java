@@ -91,25 +91,53 @@ public class Main {
         C[2][0] = 3;
         C[2][1] = 2;
 
+        for(int i = 0; i < 3; i++){
+            for(int j = 0; j < 3; j++){
+                System.out.print(C[i][j] + " ");
+            }
+            System.out.println(" ");
+        }
+        System.out.println(" ");
+
         ArrayList<Integer>[] geneList = new ArrayList[6];
         ArrayList<Integer> gene1 = new ArrayList<>();
-        gene1.add(1);
-        gene1.add(4);
+        gene1.add(0);
+        gene1.add(3);
         geneList[0] = gene1;
-        geneList[1]= null;
+        geneList[1]= new ArrayList<>();
         ArrayList<Integer> gene2 = new ArrayList<>();
-        gene2.add(2);
+        gene2.add(1);
         geneList[2] = gene2;
-        geneList[3]= null;
-        geneList[4]= null;
+        geneList[3]= new ArrayList<>();
+        geneList[4]= new ArrayList<>();
         ArrayList<Integer> gene3 = new ArrayList<>();
-        gene3.add(3);
+        gene3.add(2);
         geneList[5]= gene3;
 
-        Chromosome chromosome = new Chromosome(6, 4,8,null,geneList);
-        chromosome.updateObjectiveFunction(C);
-        System.out.println(chromosome.getObjFunc());*/
+        Integer[] timeslotList = new Integer[4];
+        timeslotList[0] = 0;
+        timeslotList[1] = 2;
+        timeslotList[2] = 5;
+        timeslotList[3] = 0;
 
+
+        Chromosome chromosome = new Chromosome(6, 4,8,timeslotList,geneList);
+        chromosome.updateObjectiveFunction(C);
+        System.out.println(chromosome.getObjFunc());
+
+        for(Integer i = 0; i < 4; i++){
+            System.out.println("Exam: " + (i+1) + "\tTimeslot:" + (chromosome.getExamTimeslot(i)+1) );
+        }
+
+        Mutation mutationTest = new Mutation(chromosome, C);
+        mutationTest.run();
+
+        System.out.println(chromosome.getObjFunc());
+
+
+        for(Integer i = 0; i < 4; i++){
+            System.out.println("Exam: " + (i+1) + "\tTimeslot:" + (chromosome.getExamTimeslot(i)+1) );
+        }*/
 
         System.exit(0);
     }

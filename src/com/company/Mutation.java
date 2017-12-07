@@ -34,6 +34,8 @@ public class Mutation implements Runnable{
         newTimeslot = rn.nextInt(chromosome.getTmax());
         oldTimeslot = chromosome.getExamTimeslot(examToChange);
 
+        //System.out.println("ExamToChange: " + (examToChange+1) + "\tNewTimeslot: "+(newTimeslot+1));
+
         //check feasability
         do {
 
@@ -56,16 +58,16 @@ public class Mutation implements Runnable{
         }while(!feasable && numTimeslotsTested < chromosome.getTmax());
 
         if(feasable){
-            newTimeslot --;
+            newTimeslot--;
+            if(newTimeslot < 0){
+                newTimeslot = newTimeslot + chromosome.getTmax();
+            }
 
-            //update the array of length E
+            //update the arrays
             chromosome.setExamTimeslot(examToChange, newTimeslot);
 
-            //update the array of length tmax
-            ArrayList<Integer>[] newGeneList = chromosome.getGeneList();
-            newGeneList[oldTimeslot].remove(examToChange);
-            newGeneList[newTimeslot].add(examToChange);
-            chromosome.setGeneList(newGeneList);
+            //update the objective function
+            chromosome.updateObjectiveFunction(C);
         }
 
 

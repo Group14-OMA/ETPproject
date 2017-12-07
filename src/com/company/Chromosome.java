@@ -70,10 +70,15 @@ public class Chromosome {
         return timeSlotList[exam];
     }
 
+    //updates both arrays (timeSlotList and geneList) to avoid having diverging values.
     public void setExamTimeslot(Integer exam, Integer newTimeslot){
+        Integer oldTimeslot = timeSlotList[exam];
         timeSlotList[exam] = newTimeslot;
-    }
 
+        geneList[oldTimeslot].remove(exam);
+        geneList[newTimeslot].add(exam);
+
+    }
 
     public ArrayList<Integer> getGene(Integer i){
         return geneList[i];
@@ -89,7 +94,7 @@ public class Chromosome {
                     for (Integer j = i + 1; j < i + 6 && j < tmax; j++) {
                         if (this.getGene(j) != null) {
                             for (Integer exam2 : this.getGene(j)) {
-                                value += C[exam - 1][exam2 - 1] * Math.pow(2, (5 - (j - i)));
+                                value += C[exam][exam2] * Math.pow(2, (5 - (j - i)));
                             }
                         }
                     }
