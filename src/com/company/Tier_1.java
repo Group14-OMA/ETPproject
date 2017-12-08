@@ -55,6 +55,7 @@ public class Tier_1 {
         population.setBestChromosome();
 
         double actualFitness = 0;
+        double randomness = Math.random();      //number between 0 and 1
 
         for(Chromosome c : population.getPopulationList()){
             actualFitness = c.getObjFunc() / population.getBestObjectiveFunc();
@@ -62,6 +63,31 @@ public class Tier_1 {
         }
 
     }// end fitnessCalc
+
+
+    //It takes the best 10% chromosomes from the total population, plus the best one
+    private void selectReproductionPop(){
+        int sizePop = population.getPopulationList().size();
+        int sizeReprPop = (10 * sizePop) / 100;
+
+        //I'M CONSIDERING THE LIST ORDERED USING FITNESS
+        //SELECTING BEST FITNESS CHROMOSOME
+        reproductionPop.add(population.getPopulationList().get(0));
+
+        if((sizeReprPop % 2) == 0){
+            //even number of member, i have to add one more to have a total even number of chromosomes
+            //starting from 1 to avoid the best one
+            for(int i = 1; i <= sizeReprPop; i++){
+                reproductionPop.add(population.getPopulationList().get(i));
+            }
+        }else{
+            //odd number of chromosomes, adding the best one, i have an even number
+            //starting from 1 to avoid the best one
+            for(int i = 1; i <= sizeReprPop + 1; i++){
+                reproductionPop.add(population.getPopulationList().get(i));
+            }
+        }
+    }
 
 
 }
