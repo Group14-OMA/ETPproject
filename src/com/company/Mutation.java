@@ -70,6 +70,7 @@ public class Mutation implements Runnable{
             chromosome.updateObjectiveFunction(C);
         }
 
-
+        //Decrementing the semaphore
+        Tier_1.terminated();
     }
 }
