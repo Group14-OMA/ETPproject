@@ -33,7 +33,6 @@ public class Tier_1 {
             fitnessCalc();
 
             //SELECT 10% OF BEST FITNESS, ALWAYS AN EVEN NUMBER
-            //x:10=size:100
             //x=10 * size / 100;
 
 
@@ -55,7 +54,7 @@ public class Tier_1 {
         population.setBestChromosome();
 
         double actualFitness = 0;
-        double randomness = Math.random();      //number between 0 and 1
+        double random = Math.random();      //number between 0 and 1
 
         for(Chromosome c : population.getPopulationList()){
             actualFitness = c.getObjFunc() / population.getBestObjectiveFunc();
