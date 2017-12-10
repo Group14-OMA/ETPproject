@@ -40,9 +40,6 @@ public class Tier_1 {
             //START N THREADS TO CREATE NEW GENERATION, HALF MUTATION, HALF CROSSOVER
             runningThreads();
 
-
-
-
             //AS SOON AS ALL THREADS HAVE TERMINATED, WRITE TO FILE.
             //Daghero's Output class
             //CALLING FITNESSCALC GIVES BACK THE BEST CHROMOSOME
