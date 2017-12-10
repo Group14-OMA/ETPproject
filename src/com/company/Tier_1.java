@@ -1,7 +1,9 @@
 package com.company;
 
 import javax.print.attribute.standard.ReferenceUriSchemesSupported;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Semaphore;
@@ -14,17 +16,12 @@ public class Tier_1 {
     private ArrayList<Chromosome> reproductionPop;          //10% of starting populations used to generate new chromosome
     private Integer[][] C;
 
-    private ExecutorService threadManager;                  //Used to run all tier2 threads
-
-    private static Semaphore semaphore;
-
     private Random randomGenerator = new Random();
 
 
     //CONSTRUCTOR
     public Tier_1(Population population, Integer[][] C){
         this.population = population;
-        threadManager = Executors.newCachedThreadPool();     //thread manager initialization
         this.C = C;
     }
 
@@ -41,12 +38,6 @@ public class Tier_1 {
             selectReproductionPop();
 
             //START N THREADS TO CREATE NEW GENERATION, HALF MUTATION, HALF CROSSOVER
-            runningThreads();
-
-            //DELETE 10% OF ORIGINAL POPULATION
-            deleteChromosomes();
-
-            //IT MANAGES RUNNING THREADS AND NEW ELEMENTS IN THE POPULATION
             runningThreads();
 
             //AS SOON AS ALL THREADS HAVE TERMINATED, WRITE TO FILE.
@@ -128,7 +119,8 @@ public class Tier_1 {
     //It starts all threads
     private void runningThreads(){
 
-        ArrayList<Mutation> mutationThreads = new ArrayList<>();
+        HashMap<Mutation, Thread> mutationThreadsHashMap = new HashMap<>();             //Mapping Mutation Thread
+        ArrayList<Mutation> mutationThreads = new ArrayList<>();                        //Contain all mutation
 
         //SAME FOR CROSSOVER
         //ArrayList<Mutation> mutationThreads = new ArrayList<>();
@@ -138,15 +130,12 @@ public class Tier_1 {
         boolean sentinel = randomGenerator.nextBoolean();
 
 
-        //Semaphore the check if all threads finished their task
-        semaphore = new Semaphore(reproductionPop.size(), true);
-
-
-
         for(int i = 0; i < reproductionPop.size(); i++){
             Mutation m = new Mutation(reproductionPop.get(i), C);
+            Thread t = new Thread(m, String.format("%md", i));          //Name m + i
             if(sentinel){
-                threadManager.execute(m);
+                t.run();
+                mutationThreadsHashMap.put(m, t);
                 mutationThreads.add(m);
             }else{
                 //TODO
@@ -154,14 +143,24 @@ public class Tier_1 {
             }
         }
 
-        //It waits all threads
-        while(semaphore.availablePermits() != 0){
+        //DELETE 10% OF ORIGINAL POPULATION
+        deleteChromosomes();
 
+
+        //WAIT FOR ALL THREADS TO COMPLETE
+        for(Mutation m : mutationThreads){
+            try{
+                mutationThreadsHashMap.get(m).join();                   //PAUSED TIER 1
+            }catch (InterruptedException i){
+                System.out.println(i.getMessage());
+            }
         }
 
+
+        //ALL THREADS COMPLETED, IT CHECKS IF THERE ARE SOME DUPLICATE. IT ADDS NEW CHROMOSOMES ONLY IF THEY ARE UNIQUE
         for(Mutation m : mutationThreads){
             //IF IT DOESN'T CONTAIN
-            if(!population.getPopulationList().contains(m.getChromosome())){
+            if(!population.getPopulationList().contains(m)){
                 population.getPopulationList().add(m.getChromosome());
             }
         }
@@ -172,10 +171,7 @@ public class Tier_1 {
     }
 
 
-    //Called by thread to signal that they have finished
-    public static void terminated(){
-        semaphore.release();
-    }
+
 
 
 }
