@@ -77,10 +77,10 @@ public class TestClass {
         geneList_2[5]= gene3_2;
 
         Integer[] timeslotList_2 = new Integer[4];
-        timeslotList[0] = 0;
-        timeslotList[1] = 4;
-        timeslotList[2] = 5;
-        timeslotList[3] = 2;
+        timeslotList_2[0] = 0;
+        timeslotList_2[1] = 4;
+        timeslotList_2[2] = 5;
+        timeslotList_2[3] = 2;
 
         Chromosome chromosome1 = new Chromosome(6, 4, 8, timeslotList_2, geneList_2);
         chromosome1.updateObjectiveFunction(C);
@@ -89,7 +89,7 @@ public class TestClass {
         Population p = new Population();
         p.addChromosome(chromosome);
         p.addChromosome(chromosome1);
-        Tier_1 tier_1_Prova = new Tier_1(p);
+        Tier_1 tier_1_Prova = new Tier_1(p, C);
         tier_1_Prova.first_tier();
     }
 

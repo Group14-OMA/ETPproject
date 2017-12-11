@@ -23,6 +23,7 @@ public class Tier_1 {
     public Tier_1(Population population, Integer[][] C){
         this.population = population;
         this.C = C;
+        this.reproductionPop = new ArrayList<>();
     }
 
 
@@ -30,20 +31,22 @@ public class Tier_1 {
     public void first_tier(){
 
             //while(true)
+            for(int i = 0; i < 500; i++) { //put this for to try testing, not that the algorithm slows down a lot around 50 cycles in. I haven't been able to make it run completly.
+                //CALCULATING FITNESS AND ORDERING
+                fitnessCalc();
 
-            //CALCULATING FITNESS AND ORDERING
-            fitnessCalc();
+                //SELECT 10% OF BEST FITNESS, ALWAYS AN EVEN NUMBER
+                selectReproductionPop();
 
-            //SELECT 10% OF BEST FITNESS, ALWAYS AN EVEN NUMBER
-            selectReproductionPop();
+                //START N THREADS TO CREATE NEW GENERATION, HALF MUTATION, HALF CROSSOVER
+                runningThreads();
 
-            //START N THREADS TO CREATE NEW GENERATION, HALF MUTATION, HALF CROSSOVER
-            runningThreads();
-
-            //AS SOON AS ALL THREADS HAVE TERMINATED, WRITE TO FILE.
-            //Daghero's Output class
-            //CALLING FITNESSCALC GIVES BACK THE BEST CHROMOSOME
-
+                //AS SOON AS ALL THREADS HAVE TERMINATED, WRITE TO FILE.
+                //Daghero's Output class
+                //CALLING FITNESSCALC GIVES BACK THE BEST CHROMOSOME
+                System.out.println(i);
+            }
+            System.out.println("Done");
 
     }// end first_tier
 
@@ -132,7 +135,7 @@ public class Tier_1 {
 
         for(int i = 0; i < reproductionPop.size(); i++){
             Mutation m = new Mutation(reproductionPop.get(i), C);
-            Thread t = new Thread(m, String.format("%md", i));          //Name m + i
+            Thread t = new Thread(m, String.format("m%d", i));          //Name m + i
             if(sentinel){
                 t.run();
                 mutationThreadsHashMap.put(m, t);
