@@ -115,7 +115,7 @@ public class Tier_1 {
 
         //Delete worst chromosomes. 10% starting from the end of the population ordered based on fitness
         for(int i = sizePop - 1; i > sizePop - sizeDelPop; i--){
-            this.population.getPopulationList().remove(i);
+            this.population.removeChromosome(i);
         }
     }
 
