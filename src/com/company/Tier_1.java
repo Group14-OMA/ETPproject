@@ -52,23 +52,29 @@ public class Tier_1 {
 
     //It calculates and sets the fitness for all chromosome in the actual population
     //IT ALSO GIVES BACK THE BEST CHROMOSOME
-    private Chromosome fitnessCalc(){
+    private void fitnessCalc(){
 
-        Chromosome bestChromosome = null;
 
         //Set best objective function value for the actual population
         population.setBestChromosome();
 
         double actualFitness;
-        double random = Math.random();      //number between 0 and 1
 
+
+        //number between 1 and 2 so that all fitness will be higher than 1 (current best solution)
+        double random = Math.random() + 1;
+
+
+
+
+        //THE BEST SOLUTION WILL HAVE FITNESS 1, SO ALL OTHERS SOLUTIONS SHOULD HAVE AN HIGHER VALUE
+        //ORDERING IN INCREASING ORDER WILL LEAVE THE BEST CHROMOSME AS FIRST
         for(Chromosome c : population.getPopulationList()){
             actualFitness = c.getObjFunc() / population.getBestObjectiveFunc();
 
             if(actualFitness == 1){
                 //The best chromosome will have fitness set to 1, it will be always first
                 c.setFitness(actualFitness);
-                bestChromosome = c;
             }else{
                 actualFitness *= random;
                 c.setFitness(actualFitness);
@@ -77,7 +83,7 @@ public class Tier_1 {
 
         }
 
-        return bestChromosome;
+
     }// end fitnessCalc
 
     //It takes the best 10% chromosomes from the total population, plus the best one

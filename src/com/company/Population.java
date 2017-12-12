@@ -8,18 +8,14 @@ public class Population {
 
     private double bestChromosome;                       //BEST OBJ FUNCTION VALUE IN THE ACTUAL POPULATION
     private ArrayList<Chromosome> populationList;
-    private Integer timeslots;
     private Integer studentNumber;
-    private Integer examNumber;
     private Integer[][] conflictMatrix;
 
 
     //CONSTRUCTOR
-    public Population(Integer timeSlots, Integer studentNumber, Integer examNumber, Integer[][] conflictMatrix) {
+    public Population( Integer studentNumber, Integer[][] conflictMatrix) {
         populationList = new ArrayList<>();
-        this.timeslots = timeSlots;
         this.studentNumber = studentNumber;
-        this.examNumber = examNumber;
         this.conflictMatrix = conflictMatrix;
         bestChromosome = Math.pow(2, 5) * this.studentNumber;       //Worst case. For sure a normal feasible solution will have a lower value.
     }
@@ -50,10 +46,13 @@ public class Population {
         for (Chromosome c : populationList) {
             if (c.getObjFunc() < this.bestChromosome) {
                 this.bestChromosome = c.getObjFunc();
-
             }
         }
     }
+
+    //TODO ORDERING POPULATION BASED ON FITNESS, DESCENDING ORDER
+
+
 }
 
 

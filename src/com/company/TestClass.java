@@ -86,7 +86,7 @@ public class TestClass {
         chromosome1.updateObjectiveFunction(C);
 
 
-        Population p = new Population();
+        Population p = new Population(8, C);
         p.addChromosome(chromosome);
         p.addChromosome(chromosome1);
         Tier_1 tier_1_Prova = new Tier_1(p, C);
