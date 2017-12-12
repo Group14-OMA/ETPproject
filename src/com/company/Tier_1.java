@@ -160,7 +160,7 @@ public class Tier_1 {
         //ALL THREADS COMPLETED, IT CHECKS IF THERE ARE SOME DUPLICATE. IT ADDS NEW CHROMOSOMES ONLY IF THEY ARE UNIQUE
         for(Mutation m : mutationThreads){
             //IF IT DOESN'T CONTAIN
-            if(!population.getPopulationList().contains(m)){
+            if(!population.getPopulationList().contains(m.getChromosome())){
                 this.population.addChromosome(m.getChromosome());
             }
         }

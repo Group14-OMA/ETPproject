@@ -43,6 +43,8 @@ public class Population {
 
     //Set best value for objective function in the actual population
     public void setBestChromosome() {
+        //reset to initial value at each new generation
+        bestChromosome = Math.pow(2, 5) * this.studentNumber;
         for (Chromosome c : populationList) {
             if (c.getObjFunc() < this.bestChromosome) {
                 this.bestChromosome = c.getObjFunc();
