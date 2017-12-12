@@ -29,7 +29,7 @@ public class Population {
         return populationList.get(n);
     }
 
-    public void removeChromosome(Integer n) {
+    public void removeChromosome(int n) {
         this.populationList.remove(n);
     }
 

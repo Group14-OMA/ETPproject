@@ -23,7 +23,6 @@ public class Tier_1 {
     public Tier_1(Population population, Integer[][] C){
         this.population = population;
         this.C = C;
-        this.reproductionPop = new ArrayList<>();
     }
 
 
@@ -82,6 +81,9 @@ public class Tier_1 {
 
     //It takes the best 10% chromosomes from the total population, plus the best one
     private void selectReproductionPop(){
+        //Resetting arraylist
+        this.reproductionPop = new ArrayList<>();
+
         int sizePop = population.getPopulationList().size();
         int sizeReprPop = (10 * sizePop) / 100;
 
@@ -110,8 +112,8 @@ public class Tier_1 {
         }
 
         //Delete worst chromosomes. 10% starting from the end of the population ordered based on fitness
-        for(int i = sizePop - 1; i > sizePop - sizeDelPop; i--){
-            this.population.removeChromosome(i);
+        for(int i = sizePop; i > sizePop - sizeDelPop; i--){
+            this.population.removeChromosome(i - 1);
         }
     } // end deleteChromosome
 
@@ -127,8 +129,9 @@ public class Tier_1 {
 
         //sentinel = 1 ---> Crossover
         //sentinel = 0 ---> Mutation
-        boolean sentinel = randomGenerator.nextBoolean();
+        //boolean sentinel = randomGenerator.nextBoolean();
 
+        boolean sentinel = true;                                //TODO CHANGE WHEN CROSSOVER READY
 
         for(int i = 0; i < reproductionPop.size(); i++){
             Mutation m = new Mutation(reproductionPop.get(i), C);
@@ -161,7 +164,7 @@ public class Tier_1 {
         for(Mutation m : mutationThreads){
             //IF IT DOESN'T CONTAIN
             if(!population.getPopulationList().contains(m)){
-                population.getPopulationList().add(m.getChromosome());
+                this.population.addChromosome(m.getChromosome());
             }
         }
 
