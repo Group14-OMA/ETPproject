@@ -76,6 +76,7 @@ public class Tier_1 {
             }
 
         }// end for
+        this.population.sortPopulation();
 
     }// end fitnessCalc
 
@@ -101,7 +102,13 @@ public class Tier_1 {
 
     //It deletes 10% of starting population of chromosomes
     private void deleteChromosomes(){
+
         int sizePop = population.getPopulationList().size();
+
+        if(sizePop == 1){
+            return;
+        }
+
         int sizeDelPop = (10 * sizePop) / 100;
 
         if(sizeDelPop == 0){
@@ -159,8 +166,14 @@ public class Tier_1 {
 
         //ALL THREADS COMPLETED, IT CHECKS IF THERE ARE SOME DUPLICATE. IT ADDS NEW CHROMOSOMES ONLY IF THEY ARE UNIQUE
         for(Mutation m : mutationThreads){
-            //IF IT DOESN'T CONTAIN
-            if(!population.getPopulationList().contains(m.getChromosome())){
+            boolean canInsert = true;
+            for(Chromosome c : population.getPopulationList()){
+                if(c.getTimeSlotList().equals(m.getChromosome().getTimeSlotList())){
+                    canInsert = false;
+                    break;
+                }
+            }
+            if(canInsert){
                 this.population.addChromosome(m.getChromosome());
             }
         }
