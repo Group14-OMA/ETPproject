@@ -13,6 +13,17 @@ public class Chromosome {
     private ArrayList<Integer>[] geneList; //Length tmax, cells contain exams for the corresponding time slot (geneList[2] == {0,3,5} --> Exams 1, 4, 6 are in the 3rd time slot)
 
 
+    public Chromosome(){
+        this.objFunc = 0.0;
+        this.fitness = 0.0;
+        this.tmax = 0;
+        this.examNum = 0;
+        this.studentNum = 0;
+        this.timeSlotList = null;
+        this.geneList = null;
+
+    }
+
     public Chromosome(Integer tmax, Integer examNum, Integer studentNum, Integer[] timeSlotList, ArrayList<Integer>[] geneList) {
         this.tmax = tmax;
         this.examNum = examNum;
@@ -101,5 +112,9 @@ public class Chromosome {
         }
 
         this.objFunc = value/this.studentNum;
+    }
+
+    public void calculateFitness(){
+
     }
 }

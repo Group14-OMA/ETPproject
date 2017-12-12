@@ -7,13 +7,16 @@ public class Mutation implements Runnable{
     private Chromosome chromosome;
     private Integer[][] C;
 
-    public Mutation(Chromosome chromosome, Integer[][] c) {
-        this.chromosome = chromosome;
-        C = c;
+    public Mutation(Chromosome c, Integer[][] C) {
+        this.chromosome = new Chromosome(c.getTmax(), c.getExamNum(), c.getStudentNum(), c.getTimeSlotList(), c.getGeneList());
+        this.chromosome.setFitness(c.getFitness());
+        this.chromosome.setGeneList(c.getGeneList().clone());
+        this.chromosome.setTimeSlotList(c.getTimeSlotList().clone());
+        this.C = C;
     }
 
-    public void setChromosome(Chromosome chromosome) {
-        this.chromosome = chromosome;
+    public void setChromosome(Chromosome c) {
+        this.chromosome = new Chromosome(c.getTmax(), c.getExamNum(), c.getStudentNum(), c.getTimeSlotList(), c.getGeneList());
     }
 
     public Chromosome getChromosome() {
