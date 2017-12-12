@@ -87,9 +87,6 @@ public class Tier_1 {
         int sizePop = population.getPopulationList().size();
         int sizeReprPop = (10 * sizePop) / 100;
 
-        //I'M CONSIDERING THE LIST ORDERED BY FITNESS
-        //SELECTING BEST FITNESS CHROMOSOME
-        //this.reproductionPop.add(population.getPopulationList().get(0));
 
         if(sizeReprPop == 0){
             sizeReprPop = 1;
