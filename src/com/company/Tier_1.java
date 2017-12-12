@@ -50,21 +50,17 @@ public class Tier_1 {
 
     }// end first_tier
 
-    //It calculates and sets the fitness for all chromosome in the actual population
-    //IT ALSO GIVES BACK THE BEST CHROMOSOME
-    private void fitnessCalc(){
 
+    //It calculates and sets the fitness for all chromosome in the actual population
+    private void fitnessCalc(){
 
         //Set best objective function value for the actual population
         population.setBestChromosome();
 
         double actualFitness;
 
-
         //number between 1 and 2 so that all fitness will be higher than 1 (current best solution)
         double random = Math.random() + 1;
-
-
 
 
         //THE BEST SOLUTION WILL HAVE FITNESS 1, SO ALL OTHERS SOLUTIONS SHOULD HAVE AN HIGHER VALUE
@@ -80,9 +76,7 @@ public class Tier_1 {
                 c.setFitness(actualFitness);
             }
 
-
-        }
-
+        }// end for
 
     }// end fitnessCalc
 
@@ -93,22 +87,18 @@ public class Tier_1 {
 
         //I'M CONSIDERING THE LIST ORDERED BY FITNESS
         //SELECTING BEST FITNESS CHROMOSOME
-        this.reproductionPop.add(population.getPopulationList().get(0));
+        //this.reproductionPop.add(population.getPopulationList().get(0));
 
-        if((sizeReprPop % 2) == 0){
-            //even number of member, i have to add one more to have a total even number of chromosomes
-            //starting from 1 to avoid the best one
-            for(int i = 1; i <= sizeReprPop; i++){
-                this.reproductionPop.add(population.getPopulationList().get(i));
-            }
-        }else{
-            //odd number of chromosomes, adding the best one, i have an even number
-            //starting from 1 to avoid the best one
-            for(int i = 1; i <= sizeReprPop + 1; i++){
-                this.reproductionPop.add(population.getPopulationList().get(i));
-            }
+        if(sizeReprPop == 0){
+            sizeReprPop = 1;
         }
-    }
+
+        for(int i = 0; i < sizeReprPop; i++){
+            this.reproductionPop.add(population.getPopulationList().get(i));
+        }
+
+    }// end selectReproductionPop
+
 
     //It deletes 10% of starting population of chromosomes
     private void deleteChromosomes(){
@@ -123,7 +113,8 @@ public class Tier_1 {
         for(int i = sizePop - 1; i > sizePop - sizeDelPop; i--){
             this.population.removeChromosome(i);
         }
-    }
+    } // end deleteChromosome
+
 
     //It starts all threads
     private void runningThreads(){
@@ -177,10 +168,7 @@ public class Tier_1 {
         //TODO
         //SAME FOR CROSSOVER
 
-    }
+    }// end runningThreads
 
+}// end Tier_1
 
-
-
-
-}
