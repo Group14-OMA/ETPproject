@@ -42,7 +42,7 @@ public class Tier_1 {
 
                 //AS SOON AS ALL THREADS HAVE TERMINATED, WRITE TO FILE.
                 //Daghero's Output class
-                //CALLING FITNESSCALC GIVES BACK THE BEST CHROMOSOME
+                //THE FIRST ELEMENT OF POPULATION WILL BE THE BEST CHROMOSOME FOUND SO FAR
                 System.out.println(i);
             }
             System.out.println("Done");
