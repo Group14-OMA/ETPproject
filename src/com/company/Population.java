@@ -52,7 +52,10 @@ public class Population {
         }
     }
 
-    //TODO ORDERING POPULATION BASED ON FITNESS, DESCENDING ORDER
+    // ORDERING POPULATION BASED ON FITNESS, INCREASING ORDER
+    public void sortPopulation(){
+        populationList.sort(Comparator.comparing(Chromosome::getFitness));
+    }
 
 
 }
