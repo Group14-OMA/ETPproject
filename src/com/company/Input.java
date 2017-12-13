@@ -18,21 +18,25 @@ public class Input {
     private Integer examNumber;
     private Integer [] [] conflictMatrix;
 
-   // private String
+   
 
     public Input(String instanceName) {
         //The name of the istance must be used to get the 3 files
     this.instanceName=instanceName;
     studentNumber=0;
-    timeslots =TimeSlotsReader(instanceName+".slo");
-    examNumber =ExamReader(instanceName+".exm");
-    conflictMatrix =new Integer[examNumber][examNumber];
-    StudentReader(instanceName + ".stu");
+
+
 
     }
 
+    public void startInput() {
+        TimeSlotsReader(instanceName+".slo");
+        ExamReader(instanceName+".exm");
+        conflictMatrix =new Integer[examNumber][examNumber];
+        StudentReader(instanceName + ".stu");
+    }
 
-    private Integer TimeSlotsReader(String file) {
+    private void TimeSlotsReader(String file) {
         String line;
         Integer slots=0 ;
         try {
@@ -40,7 +44,10 @@ public class Input {
             BufferedReader bufferedreader = new BufferedReader(filereader);
 
             while ((line = bufferedreader.readLine()) != null) {
-                slots = Integer.valueOf(line);
+                if(line.matches("^[0-9]+")) {
+                    slots = Integer.valueOf(line);
+                    break;
+                }
             }
 
 
@@ -56,14 +63,12 @@ public class Input {
             System.exit(1);
         }
 
-        return slots;
+        timeslots=slots;
     }
 
-    public String getInstanceName() {
-        return instanceName;
-    }
 
-    private Integer ExamReader(String file) {
+
+    private void ExamReader(String file) {
         String line;
         Integer linecount = 0;
 
@@ -72,6 +77,7 @@ public class Input {
             BufferedReader bufferedreader = new BufferedReader(filereader);
 
             while ((line = bufferedreader.readLine()) != null) {
+                if(line.matches("^[0-9]+\\s[0-9]+"))
                 linecount++;
             }
         } catch (FileNotFoundException e) {
@@ -79,7 +85,8 @@ public class Input {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return linecount;
+        examNumber=linecount;
+
     }
 
 
@@ -112,7 +119,7 @@ public class Input {
 
 
                     int IndiceEsame=(Integer.valueOf(parts[1]))-1;
-                    System.out.println(parts[0]+"/" + parts[1] + "->" + IndiceEsame);
+
                     studentXExam[IndiceEsame].add(parts[0]);
 
                 }
@@ -122,7 +129,7 @@ public class Input {
 
                         if(i==j) conflictMatrix[i][j]=0;
 
-                        //Molto poco ottimizzato, si può usare anche RetainAll
+
                         else {
                             //questo set è una copia del primo
                         Set<String> collisions=new HashSet<> (studentXExam[i]);
@@ -143,6 +150,12 @@ public class Input {
             }
 
         }
+
+
+    public String getInstanceName() {
+        return instanceName;
+    }
+
     public Integer[][] getConflictMatrix() {
         return conflictMatrix;
     }
