@@ -87,6 +87,7 @@ public class Main {
 	    Pop.subsetGenerator();
 	    Pop.createPopulation(-1);
 	    Pop.printPopulation();
+	    Pop.printConflictMatrix();
 
         System.exit(0);
     }

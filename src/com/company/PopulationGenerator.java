@@ -23,7 +23,9 @@ public class PopulationGenerator {
 		this.chromosome = new Integer[exams.length];
 		this.conflictMatrix=conflictMatrix;
 	}
-	
+	public ArrayList<Chromosome> getPopulation(){
+		return population;
+	}
 	public boolean catchConflict(int examIndex, int timeslot,Genes tempGeneList) {
 		 //System.out.println("inside catch conflict, tempGeneList[timeslot].length=" + tempGeneList[timeslot].size());
 		 //for (int potentialConflict: tempGeneList[timeslot]) {
@@ -211,6 +213,15 @@ public class PopulationGenerator {
 	 }
     return;		 
 }
+	public void printConflictMatrix() {
+		for(int i=0;i<this.conflictMatrix.length;i++) {
+			for(int j=0;j<this.conflictMatrix.length;j++) {
+				System.out.print(this.conflictMatrix[i][j]);
+			}
+			System.out.println();
+		}
+		return;
+	}
 
 }
 
