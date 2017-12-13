@@ -1,6 +1,8 @@
 package com.company;
 import java.util.*;
 
+//import test.PopulationGenerator;
+
 
 public class Main {
 
@@ -8,7 +10,7 @@ public class Main {
 
     public static void main(String[] args) {
         // write your code here
-                /*
+                
                 Input inputProject;
 
                 try {
@@ -27,7 +29,7 @@ public class Main {
                 if (time <= 0) {
                     throw new TimeTooLow();
                 }
-                */
+                
 
 
                 //Timer is off atm
@@ -43,7 +45,7 @@ public class Main {
 
 
 
-/*
+
         } catch (NumberFormatException nfe) {
             System.out.println("The third argument must be a number");
             System.exit(1);
@@ -62,6 +64,7 @@ public class Main {
         System.out.println("Passing " + args[0]);
         inputProject=new Input(args[0]);
         //Test dell'input
+        /*
         System.out.println("This is the input for the instance " + inputProject.getInstanceName());
         System.out.println("The number of exams is: " + inputProject.getExamNumber().toString());
         System.out.println("The number of students is " + inputProject.getStudentNumber().toString());
@@ -72,10 +75,18 @@ public class Main {
         for(Integer[] row:cmatrix) {
             System.out.println(Arrays.toString(row));
         }
+        */
 
-*/
 
-        TestClass.chromosomesTest();
+
+        //TestClass.chromosomesTest();
+        Integer[] exams = new Integer[inputProject.getExamNumber()];
+        for(int i=0; i<exams.length;i++) exams[i]=i+1; 
+    	PopulationGenerator Pop = new PopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());
+	    Pop.chromosomeGenerator();
+	    Pop.subsetGenerator();
+	    Pop.createPopulation(-1);
+	    Pop.printPopulation();
 
         System.exit(0);
     }
