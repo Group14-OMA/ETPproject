@@ -10,46 +10,40 @@ public class Main {
 
     public static void main(String[] args) {
         // write your code here
-                
-                Input inputProject;
 
-                try {
 
-                if (args.length < 3) {
-                    throw new InvalidArgumentNumber();
+        Input inputProject;
+
+        //Checking arguments
+        try {
+            if (args.length < 3) {
+                throw new InvalidArgumentNumber();
+            }
+                if (!args[1].contentEquals("-t")) {
+                throw new InsertTime();
+            }
+
+            //Timer setting
+            Timer timer = new Timer();
+            long time = Long.valueOf(args[2]) * 1000; //To have the timer in seconds
+
+            if (time <= 0) {
+                throw new TimeTooLow();
+            }
+
+            //Timer is off atm
+            /*
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    System.exit(0);
                 }
-                    if (!args[1].contentEquals("-t")) {
-                    throw new InsertTime();
+            }, time);
 
-                }
-                //Timer setting
-                Timer timer = new Timer();
-                long time = Long.valueOf(args[2]) * 1000; //To have the timer in seconds
-
-                if (time <= 0) {
-                    throw new TimeTooLow();
-                }
-                
-
-
-                //Timer is off atm
-                /*
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        System.exit(0);
-                    }
-                }, time);
-
-                */
-
-
-
-
+            */
         } catch (NumberFormatException nfe) {
             System.out.println("The third argument must be a number");
             System.exit(1);
-
         } catch (InvalidArgumentNumber argumentNumber) {
             System.out.println("Not enough arguments");
             System.exit(1);
@@ -61,8 +55,9 @@ public class Main {
             System.exit(1);
         }
 
-        System.out.println("Passing " + args[0]);
         inputProject=new Input(args[0]);
+        inputProject.startInput();                          //Getting input from file
+
         //Test dell'input
         /*
         System.out.println("This is the input for the instance " + inputProject.getInstanceName());
@@ -76,8 +71,6 @@ public class Main {
             System.out.println(Arrays.toString(row));
         }
         */
-
-
 
         //TestClass.chromosomesTest();
         Integer[] exams = new Integer[inputProject.getExamNumber()];
