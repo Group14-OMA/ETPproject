@@ -1,76 +1,87 @@
 package com.company;
+
 import java.util.ArrayList;
 
 public class PopulationGenerator {
-	private Integer[] exams;
-	private Integer timeslot;
-	private Integer[] chromosome;
-	private Integer numberOfSubset;
-	private Integer[] subsetsDimensions;
-	private Integer studentNum;
-	
-	Integer[][] conflictMatrix;
-	Genes tempGeneList;
-	ArrayList<Genes> geneListCollection = new ArrayList<Genes>();
-	ArrayList<Genes> sortedGeneCollection = new ArrayList<Genes>();
-	ArrayList<Chromosome> population = new ArrayList<Chromosome>();
-	
-	public PopulationGenerator(Integer[] exams, Integer timeslot,Integer[][] conflictMatrix, Integer studentNum ) {
-		this.timeslot=timeslot;
-		this.exams = exams;
-		this.studentNum = studentNum;
-		tempGeneList= new Genes(timeslot);
-		this.chromosome = new Integer[exams.length];
-		this.conflictMatrix=conflictMatrix;
-	}
-	public ArrayList<Chromosome> getPopulation(){
-		return population;
-	}
-	public boolean catchConflict(int examIndex, int timeslot,Genes tempGeneList) {
-		 //System.out.println("inside catch conflict, tempGeneList[timeslot].length=" + tempGeneList[timeslot].size());
-		 //for (int potentialConflict: tempGeneList[timeslot]) {
-		 for(int potentialConflict: tempGeneList.timeslotList(timeslot)) {
-			 //System.out.println("examIndex= " + examIndex + " --><-- potentialConflictIndex " + (potentialConflict-1));
-	    		if(this.conflictMatrix[examIndex][potentialConflict-1]!=0) {//potentialConflict=esame , potentialConfict-1= indece esame 
-	    			//System.out.println("timeslot: "+timeslot+" exam: "+(examIndex+1) +" conflict with: "+potentialConflict);
-	    			return true;
-	    		}
-	    	}
-	    	return false;
-	    	
-	}
-	
-	//public int chromosomeGenerator(ArrayList<Genes> geneListCollection,Integer[] exams,Integer[] chromosome,Genes tempGeneList,Integer[][] conflictMatrix) {
-	public void chromosomeGenerator() {
-		 int lastTimeSlot=0;
-		 int examIndex=0;
-		 int subsetColor;
-		 int subsetCounter=0;
-		 boolean newSubset=false;
-		 Integer[] subsetColors = new Integer[this.exams.length];
-		 for (int x=0;x<subsetColors.length;x++) subsetColors[x]=0;	 
-		 for(examIndex=0;examIndex<this.conflictMatrix.length;examIndex++) {
-			 //System.out.println("xxxxxxxxxxxxxxxxxiteration: " + examIndex);
-			 System.out.println();
-			 //if(chromosome[examIndex]==null) {
-			 Genes tempGeneList1= new Genes(this.tempGeneList.length());
-			 if (true) {
-				 if(subsetColors[examIndex]==0) {
-					 subsetCounter++;
-					 subsetColor=subsetCounter;
-					 newSubset=true;
-				 } else {
-					 subsetColor=subsetColors[examIndex];
-				 }
-				 this.chromosome[examIndex]=0; //assign exam to first slot, since every first chromosome of a subset can't be confilicting 
-				 //tempGeneList[0].add(exams[examIndex]);
-				 tempGeneList1.add(0,exams[examIndex]);
-				 chromosomeRecursion(lastTimeSlot,examIndex,tempGeneList1);
-				 tempGeneList1.setSubset(subsetColor);
-				 this.geneListCollection.add(tempGeneList1);
-				 //print subset genList
-				 
-				 System.out.println("tempGeneList:" + "subset: " + tempGeneList1.getSubset());
+
+    private Integer[] exams;
+    private Integer timeslot;
+    private Integer[] chromosome;
+    private Integer numberOfSubset;
+    private Integer[] subsetsDimensions;
+    private Integer studentNum;
+
+
+    private Integer[][] conflictMatrix;
+    private Genes tempGeneList;
+    private ArrayList<Genes> geneListCollection = new ArrayList<Genes>();
+    private ArrayList<Genes> sortedGeneCollection = new ArrayList<Genes>();
+    private ArrayList<Chromosome> population = new ArrayList<Chromosome>();
+
+
+    public void generatePop(){
+        chromosomeGenerator();
+        subsetGenerator();
+        createPopulation(-1);
+        //printPopulation();
+        //printConflictMatrix();
+    }
+
+
+    public PopulationGenerator(Integer[] exams, Integer timeslot, Integer[][] conflictMatrix, Integer studentNum) {
+        this.timeslot = timeslot;
+        this.exams = exams;
+        this.studentNum = studentNum;
+        tempGeneList = new Genes(timeslot);
+        this.chromosome = new Integer[exams.length];
+        this.conflictMatrix = conflictMatrix;
+    }
+
+    public boolean catchConflict(int examIndex, int timeslot, Genes tempGeneList) {
+        //System.out.println("inside catch conflict, tempGeneList[timeslot].length=" + tempGeneList[timeslot].size());
+        //for (int potentialConflict: tempGeneList[timeslot]) {
+        for (int potentialConflict : tempGeneList.timeslotList(timeslot)) {
+            //System.out.println("examIndex= " + examIndex + " --><-- potentialConflictIndex " + (potentialConflict-1));
+            if (this.conflictMatrix[examIndex][potentialConflict - 1] != 0) {//potentialConflict=esame , potentialConfict-1= indece esame
+                //System.out.println("timeslot: "+timeslot+" exam: "+(examIndex+1) +" conflict with: "+potentialConflict);
+                return true;
+            }
+        }
+        return false;
+
+    }
+
+    //public int chromosomeGenerator(ArrayList<Genes> geneListCollection,Integer[] exams,Integer[] chromosome,Genes tempGeneList,Integer[][] conflictMatrix) {
+    public void chromosomeGenerator() {
+        int lastTimeSlot = 0;
+        int examIndex = 0;
+        int subsetColor;
+        int subsetCounter = 0;
+        boolean newSubset = false;
+        Integer[] subsetColors = new Integer[this.exams.length];
+        for (int x = 0; x < subsetColors.length; x++) subsetColors[x] = 0;
+        for (examIndex = 0; examIndex < this.conflictMatrix.length; examIndex++) {
+            //System.out.println("xxxxxxxxxxxxxxxxxiteration: " + examIndex);
+            //System.out.println();
+            //if(chromosome[examIndex]==null) {
+            Genes tempGeneList1 = new Genes(this.tempGeneList.length());
+            if (true) {
+                if (subsetColors[examIndex] == 0) {
+                    subsetCounter++;
+                    subsetColor = subsetCounter;
+                    newSubset = true;
+                } else {
+                    subsetColor = subsetColors[examIndex];
+                }
+                this.chromosome[examIndex] = 0; //assign exam to first slot, since every first chromosome of a subset can't be confilicting
+                //tempGeneList[0].add(exams[examIndex]);
+                tempGeneList1.add(0, exams[examIndex]);
+                chromosomeRecursion(lastTimeSlot, examIndex, tempGeneList1);
+                tempGeneList1.setSubset(subsetColor);
+                this.geneListCollection.add(tempGeneList1);
+                //print subset genList
+
+                //System.out.println("tempGeneList:" + "subset: " + tempGeneList1.getSubset());
 				 /*for(int i=0;i<tempGeneList.length();i++) {
 				    	System.out.print("["+i+"]");
 				    	if (tempGeneList.size(i)!=0) {
@@ -80,7 +91,7 @@ public class PopulationGenerator {
 				    	}
 				    	System.out.println();
 				    }*/
-				 tempGeneList1.printGene();
+				 //tempGeneList1.printGene();
 				 if (newSubset) {
 					 for(int i=0;i<tempGeneList1.length();i++) {
 						 for(int k: tempGeneList1.timeslotList(i)) {
@@ -92,8 +103,8 @@ public class PopulationGenerator {
 				 // subsetArray should be [1,1,1,2,3,3]
 				 newSubset=false;
 				 //tempGeneList.removeAll(); weird stuff happen, reminder look at the comment before the function
-				 System.out.println();
-				 for(int c=0;c<chromosome.length;c++) System.out.print(subsetColors[c]+"|");
+				 //System.out.println();
+				 //for(int c=0;c<chromosome.length;c++) System.out.print(subsetColors[c]+"|");
 				 for(int c=0;c<chromosome.length;c++) this.chromosome[c]=null;
 				 
 			 }
@@ -135,6 +146,7 @@ public class PopulationGenerator {
 		 }
 		 return placed;
 	 }
+
 	public void subsetGenerator() {
 		int dimension=0;
 	    for(int subCounter=1;subCounter<=this.numberOfSubset;subCounter++ ) {
@@ -148,6 +160,7 @@ public class PopulationGenerator {
 	    	
 	    }
 	}
+
 	public void createPopulation(int subsetCounter) {
 		 int myCounter=subsetCounter;
 		 if(myCounter==-1) myCounter++;
@@ -161,7 +174,8 @@ public class PopulationGenerator {
 			 Genes tempGene = chromosomeToGenes(finalChromosome);
 			 Integer examNum = this.exams.length; //brutta roba
 			 Chromosome myChromosome = new Chromosome(this.timeslot,examNum,this.studentNum,finalChromosome,tempGene.geneList());
-			 this.population.add(myChromosome);	
+			 myChromosome.updateObjectiveFunction(conflictMatrix);
+			 this.population.add(myChromosome);
 			 return;
 		 }
 		 if(myCounter!=this.subsetsDimensions.length-1) {
@@ -200,28 +214,125 @@ public class PopulationGenerator {
 		 }
 	     return;		 
 	 }*/
-	
-	public void printPopulation() {
-	 System.out.println("total number of chromsomes= " + this.population.size());
-	 System.out.println("numero esami:" + this.exams.length);
-	 System.out.println();
-	 for(int i=0;i<this.subsetsDimensions.length;i++) System.out.print("-" + this.subsetsDimensions[i] + "-");
-	 System.out.println();
-	 for(int i=0;i<this.subsetsDimensions.length;i++) {
-		 if(i==this.subsetsDimensions.length-1) System.out.println("subset#" + i + "dimesion:" + (this.exams.length-this.subsetsDimensions[i]));
-		 else System.out.println("subset#" + i + "dimesion:" + (this.subsetsDimensions[i+1]-this.subsetsDimensions[i]));
-	 }
-    return;		 
-}
-	public void printConflictMatrix() {
-		for(int i=0;i<this.conflictMatrix.length;i++) {
-			for(int j=0;j<this.conflictMatrix.length;j++) {
-				System.out.print(this.conflictMatrix[i][j]);
-			}
-			System.out.println();
-		}
-		return;
-	}
+
+    public void printPopulation() {
+        System.out.println("total number of chromsomes= " + this.population.size());
+        System.out.println("numero esami:" + this.exams.length);
+        System.out.println();
+        for (int i = 0; i < this.subsetsDimensions.length; i++) System.out.print("-" + this.subsetsDimensions[i] + "-");
+        System.out.println();
+        for (int i = 0; i < this.subsetsDimensions.length; i++) {
+            if (i == this.subsetsDimensions.length - 1)
+                System.out.println("subset#" + i + "dimesion:" + (this.exams.length - this.subsetsDimensions[i]));
+            else
+                System.out.println("subset#" + i + "dimesion:" + (this.subsetsDimensions[i + 1] - this.subsetsDimensions[i]));
+        }
+        return;
+    }
+
+    public void printConflictMatrix() {
+        for (int i = 0; i < this.conflictMatrix.length; i++) {
+            for (int j = 0; j < this.conflictMatrix.length; j++) {
+                System.out.print(this.conflictMatrix[i][j]);
+            }
+            System.out.println();
+        }
+        return;
+    }
+
+
+
+    //SETTER & GETTER
+
+    public Integer[] getExams() {
+        return exams;
+    }
+
+    public void setExams(Integer[] exams) {
+        this.exams = exams;
+    }
+
+    public Integer getTimeslot() {
+        return timeslot;
+    }
+
+    public void setTimeslot(Integer timeslot) {
+        this.timeslot = timeslot;
+    }
+
+    public Integer[] getChromosome() {
+        return chromosome;
+    }
+
+    public void setChromosome(Integer[] chromosome) {
+        this.chromosome = chromosome;
+    }
+
+    public Integer getNumberOfSubset() {
+        return numberOfSubset;
+    }
+
+    public void setNumberOfSubset(Integer numberOfSubset) {
+        this.numberOfSubset = numberOfSubset;
+    }
+
+    public Integer[] getSubsetsDimensions() {
+        return subsetsDimensions;
+    }
+
+    public void setSubsetsDimensions(Integer[] subsetsDimensions) {
+        this.subsetsDimensions = subsetsDimensions;
+    }
+
+    public Integer getStudentNum() {
+        return studentNum;
+    }
+
+    public void setStudentNum(Integer studentNum) {
+        this.studentNum = studentNum;
+    }
+
+    public Integer[][] getConflictMatrix() {
+        return conflictMatrix;
+    }
+
+    public void setConflictMatrix(Integer[][] conflictMatrix) {
+        this.conflictMatrix = conflictMatrix;
+    }
+
+    public Genes getTempGeneList() {
+        return tempGeneList;
+    }
+
+    public void setTempGeneList(Genes tempGeneList) {
+        this.tempGeneList = tempGeneList;
+    }
+
+    public ArrayList<Genes> getGeneListCollection() {
+        return geneListCollection;
+    }
+
+    public void setGeneListCollection(ArrayList<Genes> geneListCollection) {
+        this.geneListCollection = geneListCollection;
+    }
+
+    public ArrayList<Genes> getSortedGeneCollection() {
+        return sortedGeneCollection;
+    }
+
+    public void setSortedGeneCollection(ArrayList<Genes> sortedGeneCollection) {
+        this.sortedGeneCollection = sortedGeneCollection;
+    }
+
+    public void setPopulation(ArrayList<Chromosome> population) {
+        this.population = population;
+    }
+
+    public ArrayList<Chromosome> getPopulation() {
+        return population;
+    }
+
+
 
 }
 

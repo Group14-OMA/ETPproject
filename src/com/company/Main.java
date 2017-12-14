@@ -75,14 +75,18 @@ public class Main {
         //TestClass.chromosomesTest();
         Integer[] exams = new Integer[inputProject.getExamNumber()];
         for(int i=0; i<exams.length;i++) exams[i]=i+1; 
-    	PopulationGenerator Pop = new PopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());
-	    Pop.chromosomeGenerator();
-	    Pop.subsetGenerator();
-	    Pop.createPopulation(-1);
-	    Pop.printPopulation();
-	    Pop.printConflictMatrix();
 
-        System.exit(0);
+        //Generating first population
+        PopulationGenerator Pop = new PopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());
+        Pop.generatePop();
+
+	    //Creating population Class
+	    Population p = new Population(Pop.getStudentNum(), Pop.getConflictMatrix(), Pop.getPopulation());
+
+	    //Generating and Starting tier 1
+	    Tier_1 tier_1 = new Tier_1(p, inputProject.getConflictMatrix());
+        tier_1.first_tier();
+        //System.exit(0);
     }
 
 }

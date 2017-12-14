@@ -13,8 +13,8 @@ public class Population {
 
 
     //CONSTRUCTOR
-    public Population( Integer studentNumber, Integer[][] conflictMatrix) {
-        populationList = new ArrayList<>();
+    public Population( Integer studentNumber, Integer[][] conflictMatrix, ArrayList<Chromosome> populationList) {
+        this.populationList = populationList;
         this.studentNumber = studentNumber;
         this.conflictMatrix = conflictMatrix;
         bestChromosome = Math.pow(2, 5) * this.studentNumber;       //Worst case. For sure a normal feasible solution will have a lower value.

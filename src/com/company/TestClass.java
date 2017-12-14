@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 public class TestClass {
 
+
+
     //IT CREATES 2 CHROMOSOMES, INITIALIZE A POPULATION, RUN TIER 1 METHOD
     static public void chromosomesTest(){
 
@@ -86,12 +88,10 @@ public class TestClass {
         chromosome1.updateObjectiveFunction(C);
 
 
-        Population p = new Population(8, C);
-        p.addChromosome(chromosome);
-        p.addChromosome(chromosome1);
-        Tier_1 tier_1_Prova = new Tier_1(p, C);
-        tier_1_Prova.first_tier();
     }
+
+
+
 
 
 }

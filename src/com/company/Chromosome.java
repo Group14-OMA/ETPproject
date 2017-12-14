@@ -21,7 +21,6 @@ public class Chromosome {
         this.studentNum = 0;
         this.timeSlotList = null;
         this.geneList = null;
-
     }
 
     public Chromosome(Integer tmax, Integer examNum, Integer studentNum, Integer[] timeSlotList, ArrayList<Integer>[] geneList) {
