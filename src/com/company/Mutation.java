@@ -70,17 +70,18 @@ public class Mutation implements Runnable{
             numTimeslotsTested++;
         }while(!feasable && numTimeslotsTested < chromosome.getTmax());
 
-        if(feasable){
+        if(feasable && numTimeslotsTested != chromosome.getTmax()){
             newTimeslot--;
             if(newTimeslot < 0){
                 newTimeslot = newTimeslot + chromosome.getTmax();
+                //update the arrays
+                chromosome.setExamTimeslot(examToChange, newTimeslot);
+
+                //update the objective function
+                chromosome.updateObjectiveFunction(C);
             }
 
-            //update the arrays
-            chromosome.setExamTimeslot(examToChange, newTimeslot);
 
-            //update the objective function
-            chromosome.updateObjectiveFunction(C);
         }
 
 

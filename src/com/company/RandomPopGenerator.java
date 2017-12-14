@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class RandomPopGenerator implements Runnable
+public class RandomPopGenerator
 {
 
 
@@ -32,16 +32,17 @@ public class RandomPopGenerator implements Runnable
     }
 
 
-    @Override
+
     public void run() {
         Boolean placed;
-
+        Boolean feasable;
         numExams = conflictMatrix.length;
 
         for(Integer i = 0; i < populationSize; i++) {
             ArrayList<Integer> randomArray = new ArrayList<>();
             Integer[] timeslotList = new Integer[numExams];
             ArrayList<Integer>[] geneList = new ArrayList[tmax];
+            feasable = true;
 
             //initialize geneList with empty ArrayLists
             for(Integer j = 0; j < tmax; j++){
@@ -74,17 +75,24 @@ public class RandomPopGenerator implements Runnable
 
                 if(placed == true){
                     geneList[k-1].add(randomArray.get(j));
+                }else{
+                    feasable = false;
+                    break;
                 }
-                //else not feasable! Throw exception?
+
+
             }
 
 
             //Shuffle the timeslots that the different groups of non conflicting exams are in, so the aren't all collected in the first cells.
             shuffleArray(geneList);
-            population.add(new Chromosome(tmax, numExams, studentNum, createTimeslotList(geneList), geneList));
-            population.get(i).updateObjectiveFunction(conflictMatrix);
-        }
+            Chromosome newChromosome = new Chromosome(tmax, numExams, studentNum, createTimeslotList(geneList), geneList);
+            newChromosome.updateObjectiveFunction(conflictMatrix);
+            if(feasable) {
+                population.add(newChromosome);
+            }
 
+        }
     }
 
     // Implementing Fisher–Yates shuffle
