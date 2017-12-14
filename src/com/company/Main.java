@@ -78,20 +78,15 @@ public class Main {
 
         //Generating first population
         PopulationGenerator Pop = new PopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());
-        //Pop.generatePop();
+        Pop.generatePop();
 
 	    //Creating population Class
 	    Population p = new Population(Pop.getStudentNum(), Pop.getConflictMatrix(), Pop.getPopulation());
 
 	    //Generating and Starting tier 1
 	    Tier_1 tier_1 = new Tier_1(p, inputProject.getConflictMatrix(),args[0]);
-        //tier_1.first_tier();
-        Integer[] test2={1,1,1,2};
-        Integer[] test1= {0,1,2,3,4};
+        tier_1.first_tier();
 
-        tier_1.output(test2);
-        tier_1.output(test1);
-        System.exit(0);
     }
 
 }
