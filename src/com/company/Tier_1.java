@@ -2,6 +2,8 @@ package com.company;
 
 import javax.print.attribute.standard.ReferenceUriSchemesSupported;
 import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
-import java.io.PrintWriter;
+
 
 
 public class Tier_1 {
@@ -35,8 +37,10 @@ public class Tier_1 {
     //Called by main to start generating new generations
     public void first_tier(){
 
+
+
             //while(true)
-            for(int i = 0; i < 500; i++) { //put this for to try testing, not that the algorithm slows down a lot around 50 cycles in. I haven't been able to make it run completly.
+            for(int i = 0; i < 10000; i++) { //put this for to try testing, not that the algorithm slows down a lot around 50 cycles in. I haven't been able to make it run completly.
                 //CALCULATING FITNESS AND ORDERING
                 fitnessCalc();
 
@@ -56,6 +60,8 @@ public class Tier_1 {
             for(ArrayList<Integer> gene : population.getChromosome(0).getGeneList()){
                 System.out.print(gene + "\t\t");
             }
+
+            output();
 
     }// end first_tier
 
@@ -210,10 +216,10 @@ public class Tier_1 {
     }// end runningThreads
 
     //AKA Daghero's Output function!
-    private void writeOutput() {
+    private void output() {
         Chromosome bestOne=population.getChromosome(0);
         Integer[] timeslotList=bestOne.getTimeSlotList();
-        PrintWriter pw=null;
+        PrintWriter pw = null;
 
 
         try {
