@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 public class Main {
 
     private static final int THREADS_NUMBER = 10;
+    private static final int POPULATION_SIZE = 10000;
     private static Input inputProject;
 
 
@@ -85,7 +86,7 @@ public class Main {
 	    //Generating and Starting tier 1
 	    Tier_1 tier_1 = new Tier_1(generatePopulation(), inputProject.getConflictMatrix());
         tier_1.first_tier();
-        //System.exit(0);
+        System.exit(0);
     }
 
 
@@ -110,7 +111,7 @@ public class Main {
 
         //Running 10 threads to generate 1000 chromosomes each.
         for(int i = 0; i < THREADS_NUMBER; i++){
-            RandomPopGenerator randPop = new RandomPopGenerator(inputProject.getConflictMatrix(), 1000, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
+            RandomPopGenerator randPop = new RandomPopGenerator(inputProject.getConflictMatrix(),POPULATION_SIZE, inputProject.getTimeslots(),inputProject.getStudentNumber(), inputProject.getExamNumber());
             executorService.submit(randPop);
             randomPopThreads.add(randPop);
         }

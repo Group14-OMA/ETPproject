@@ -56,8 +56,13 @@ public class Population {
     }
 
     // ORDERING POPULATION BASED ON FITNESS, INCREASING ORDER
-    public void sortPopulation(){
+    public void sortPopulationFitness(){
         populationList.sort(Comparator.comparing(Chromosome::getFitness));
+    }
+
+    // ORDERING POPULATION BASED ON OBJECTIVE FUNCTION, INCREASING ORDER
+    public void sortPopulationObjFunction(){
+        populationList.sort(Comparator.comparing(Chromosome::getObjFunc));
     }
 
     public void setPopulationList(ArrayList<Chromosome> populationList) {
