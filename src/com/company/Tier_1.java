@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 
 public class Tier_1 {
@@ -17,6 +17,8 @@ public class Tier_1 {
     private Integer[][] C;
 
     private Random randomGenerator = new Random();
+    private ExecutorService executorService;
+
 
 
     //CONSTRUCTOR
@@ -54,7 +56,7 @@ public class Tier_1 {
     private void fitnessCalc(){
 
         //Set best objective function value for the actual population
-        population.setBestChromosome();
+        this.population.setBestChromosome();
 
         double actualFitness;
 
@@ -64,8 +66,8 @@ public class Tier_1 {
 
         //THE BEST SOLUTION WILL HAVE FITNESS 1, SO ALL OTHERS SOLUTIONS SHOULD HAVE AN HIGHER VALUE
         //ORDERING IN INCREASING ORDER WILL LEAVE THE BEST CHROMOSME AS FIRST
-        for(Chromosome c : population.getPopulationList()){
-            actualFitness = c.getObjFunc() / population.getBestObjectiveFunc();
+        for(Chromosome c : this.population.getPopulationList()){
+            actualFitness = c.getObjFunc() / this.population.getBestObjectiveFunc();
 
             if(actualFitness == 1){
                 //The best chromosome will have fitness set to 1, it will be always first
@@ -125,8 +127,17 @@ public class Tier_1 {
     //It starts all threads
     private void runningThreads(){
 
-        HashMap<Mutation, Thread> mutationThreadsHashMap = new HashMap<>();             //Mapping Mutation Thread
+        executorService = Executors.newCachedThreadPool();
+
+        //HashMap<Mutation, Thread> mutationThreadsHashMap = new HashMap<>();             //Mapping Mutation Thread
         ArrayList<Mutation> mutationThreads = new ArrayList<>();                        //Contain all mutation
+
+        for(int i = 0; i < reproductionPop.size(); i++){
+            Mutation m = new Mutation(reproductionPop.get(i), C);
+            mutationThreads.add(m);
+        }
+
+
 
         //SAME FOR CROSSOVER
         //ArrayList<Mutation> mutationThreads = new ArrayList<>();
@@ -137,31 +148,38 @@ public class Tier_1 {
 
         boolean sentinel = true;                                //TODO CHANGE WHEN CROSSOVER READY
 
-        for(int i = 0; i < reproductionPop.size(); i++){
-            Mutation m = new Mutation(reproductionPop.get(i), C);
-            Thread t = new Thread(m, String.format("m%d", i));          //Name m + i
+
+
+        //reproductionPop.size()
+        for(Mutation m : mutationThreads){
+            //Thread t = new Thread(m, String.format("m%d", i));          //Name m + i
+
             if(sentinel){
-                t.run();
-                mutationThreadsHashMap.put(m, t);
-                mutationThreads.add(m);
+
+                //t.run();
+                executorService.submit(m);
+                //mutationThreadsHashMap.put(m, t);
+                //sentinel = false;
             }else{
                 //TODO
                 //CROSSOVER METHOD
             }
         }
 
+        executorService.shutdown();
         //DELETE 10% OF ORIGINAL POPULATION
         deleteChromosomes();
 
 
         //WAIT FOR ALL THREADS TO COMPLETE
-        for(Mutation m : mutationThreads){
+
             try{
-                mutationThreadsHashMap.get(m).join();                   //PAUSED TIER 1
+                //mutationThreadsHashMap.get(m).join();                   //PAUSED TIER 1
+                executorService.awaitTermination(10, TimeUnit.MINUTES);
             }catch (InterruptedException i){
                 System.out.println(i.getMessage());
             }
-        }
+
 
 
         //ALL THREADS COMPLETED, IT CHECKS IF THERE ARE SOME DUPLICATE. IT ADDS NEW CHROMOSOMES ONLY IF THEY ARE UNIQUE

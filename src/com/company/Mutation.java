@@ -19,6 +19,7 @@ public class Mutation implements Runnable{
         this.chromosome.setGeneList(geneList);
         this.chromosome.setTimeSlotList(c.getTimeSlotList().clone());
         this.C = C;
+        this.chromosome.updateObjectiveFunction(this.C);
     }
 
     public void setChromosome(Chromosome c) {
@@ -41,9 +42,10 @@ public class Mutation implements Runnable{
 
         examToChange = rn.nextInt(chromosome.getExamNum());
         newTimeslot = rn.nextInt(chromosome.getTmax());
-        oldTimeslot = chromosome.getExamTimeslot(examToChange);
+        oldTimeslot = chromosome.getExamTimeslot(examToChange);    //timeslots of old exam
 
         //System.out.println("ExamToChange: " + (examToChange+1) + "\tNewTimeslot: "+(newTimeslot+1));
+
 
         //check feasability
         do {
@@ -56,6 +58,7 @@ public class Mutation implements Runnable{
                     if (C[examToChange][exam] != 0) {
                         //there's a conflict
                         feasable = false;
+                        break;
                     }
                 }
 
@@ -64,6 +67,7 @@ public class Mutation implements Runnable{
             }
 
             newTimeslot = (newTimeslot + 1) % chromosome.getTmax();
+            numTimeslotsTested++;
         }while(!feasable && numTimeslotsTested < chromosome.getTmax());
 
         if(feasable){
@@ -78,6 +82,8 @@ public class Mutation implements Runnable{
             //update the objective function
             chromosome.updateObjectiveFunction(C);
         }
+
+
 
     }
 }
