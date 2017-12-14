@@ -37,7 +37,7 @@ public class Genes{
 
     //TODO WE HAVE TO SOLVE THIS SHIT
     public ArrayList<Integer>[] geneList(){
-        for(int i = 0; i < this.myGeneList.length; i++){
+        /*for(int i = 0; i < this.myGeneList.length; i++){
             for(int j = 0; j < this.myGeneList[i].size(); j++){
                 Integer tmp = this.myGeneList[i].get(j);
                 tmp--;
@@ -46,20 +46,10 @@ public class Genes{
 
             }
         }
-        return this.myGeneList;
-
-
+        return this.myGeneList;*/
+    	return this.myGeneList;
     }
-    //Potentially useless method, the check would be too expensive
-    public boolean isPresent(int gene) {
-        for(int i=0;i<this.myGeneList.length;i++) {
-            for(int k: this.myGeneList[i]) {
-                if (i==k) return true;
-            }
-        }
-        return false;
-    }
-
+    
     public void setSubset(int sub) {
         this.subset = sub;
     }
@@ -83,7 +73,7 @@ public class Genes{
         for(int timeslot=0;timeslot<this.myGeneList.length; timeslot++) {
             for(int exam: this.myGeneList[timeslot]) {
                 //examIndex = exam-1;
-                chromosome[exam-1]=timeslot;
+                chromosome[exam]=timeslot;
             }
         }
         return chromosome;
