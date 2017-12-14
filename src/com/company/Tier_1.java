@@ -48,6 +48,10 @@ public class Tier_1 {
                 System.out.println(i);
             }
             System.out.println("Done");
+            System.out.println("ObjFunc: " + population.getBestObjectiveFunc());
+            for(ArrayList<Integer> gene : population.getChromosome(0).getGeneList()){
+                System.out.print(gene + "\t\t");
+            }
 
     }// end first_tier
 
