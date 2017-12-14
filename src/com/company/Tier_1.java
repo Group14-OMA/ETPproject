@@ -1,6 +1,7 @@
 package com.company;
 
 import javax.print.attribute.standard.ReferenceUriSchemesSupported;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
+import java.io.PrintWriter;
 
 
 public class Tier_1 {
@@ -15,16 +17,18 @@ public class Tier_1 {
     private Population population;
     private ArrayList<Chromosome> reproductionPop;          //10% of starting populations used to generate new chromosome
     private Integer[][] C;
-
+    private String fileName;
     private Random randomGenerator = new Random();
     private ExecutorService executorService;
 
 
 
     //CONSTRUCTOR
-    public Tier_1(Population population, Integer[][] C){
+    public Tier_1(Population population, Integer[][] C,String instanceName){
         this.population = population;
         this.C = C;
+        fileName=instanceName + "_OMAAL_group14.sol";
+
     }
 
 
@@ -204,6 +208,28 @@ public class Tier_1 {
         //SAME FOR CROSSOVER
 
     }// end runningThreads
+
+    //AKA Daghero's Output function!
+    private void writeOutput() {
+        Chromosome bestOne=population.getChromosome(0);
+        Integer[] timeslotList=bestOne.getTimeSlotList();
+        PrintWriter pw=null;
+
+
+        try {
+
+            pw=new PrintWriter(fileName);
+            for (int a=0; a < timeslotList.length; a++) {
+                pw.println( (a+1) + " " + (timeslotList[a] + 1));
+            }
+            pw.flush();
+            pw.close();
+
+        } catch (FileNotFoundException fnf) {
+            fnf.printStackTrace();
+        }
+
+    }
 
 }// end Tier_1
 
