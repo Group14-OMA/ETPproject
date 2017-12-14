@@ -8,6 +8,8 @@ import java.util.concurrent.ThreadLocalRandom;
 public class RandomPopGenerator implements Runnable
 {
 
+
+
     private Integer[][] conflictMatrix;
     private Integer populationSize;
     private ArrayList<Chromosome> population;

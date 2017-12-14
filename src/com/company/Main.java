@@ -1,18 +1,23 @@
 package com.company;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 //import test.PopulationGenerator;
 
 
 public class Main {
 
+    private static final int THREADS_NUMBER = 10;
+    private static Input inputProject;
 
 
     public static void main(String[] args) {
         // write your code here
 
 
-        Input inputProject;
+
 
         //Checking arguments
         try {
@@ -73,20 +78,58 @@ public class Main {
         */
 
         //TestClass.chromosomesTest();
-        Integer[] exams = new Integer[inputProject.getExamNumber()];
-        for(int i=0; i<exams.length;i++) exams[i]=i+1; 
-
-        //Generating first population
-        PopulationGenerator Pop = new PopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());
-        Pop.generatePop();
-
-	    //Creating population Class
-	    Population p = new Population(Pop.getStudentNum(), Pop.getConflictMatrix(), Pop.getPopulation());
 
 	    //Generating and Starting tier 1
-	    Tier_1 tier_1 = new Tier_1(p, inputProject.getConflictMatrix());
+	    Tier_1 tier_1 = new Tier_1(generatePopulation(), inputProject.getConflictMatrix());
         tier_1.first_tier();
         //System.exit(0);
+    }
+
+
+    //IT MANAGES THE POPULATION GENERATORS WITH DIFFERENT THREADS
+    private static Population generatePopulation(){
+
+        Integer[] exams = new Integer[inputProject.getExamNumber()];
+        for(int i=0; i<exams.length;i++) exams[i]=i+1;
+
+        //LORENZO'S POPULATION
+        //Generating first population
+        //PopulationGenerator pop = new PopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());
+        //pop.generatePop();
+        //Creating population Class
+        //Population p = new Population(pop.getStudentNum(), pop.getConflictMatrix(), pop.getPopulation());
+
+
+        Population p = new Population(inputProject.getStudentNumber(), inputProject.getConflictMatrix(), null);
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        ArrayList<RandomPopGenerator> randomPopThreads = new ArrayList<>();
+        ArrayList<Chromosome> chromosomes = new ArrayList<>();
+
+        //Running 10 threads to generate 1000 chromosomes each.
+        for(int i = 0; i < THREADS_NUMBER; i++){
+            RandomPopGenerator randPop = new RandomPopGenerator(inputProject.getConflictMatrix(), 1000, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
+            executorService.submit(randPop);
+            randomPopThreads.add(randPop);
+        }
+
+        executorService.shutdown();
+
+        //Waiting for termination of all threads
+        try{
+            executorService.awaitTermination(1, TimeUnit.HOURS);
+        }catch(InterruptedException e){
+            System.out.println(e.getMessage());
+        }
+
+        // gathering result
+        for(RandomPopGenerator h : randomPopThreads){
+            chromosomes.addAll(h.getPopulation());
+        }
+
+
+        p.setPopulationList(chromosomes);
+        return p;
+
     }
 
 }

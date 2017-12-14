@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 
 public class Tier_1 {
 
+    private final int PERCENTAGE_TO_REPRODUCTION = 10;
+
     private Population population;
     private ArrayList<Chromosome> reproductionPop;          //10% of starting populations used to generate new chromosome
     private Integer[][] C;
@@ -92,7 +94,7 @@ public class Tier_1 {
         this.reproductionPop = new ArrayList<>();
 
         int sizePop = population.getPopulationList().size();
-        int sizeReprPop = (10 * sizePop) / 100;
+        int sizeReprPop = (PERCENTAGE_TO_REPRODUCTION * sizePop) / 100;
 
 
         if(sizeReprPop == 0){
@@ -115,7 +117,7 @@ public class Tier_1 {
             return;
         }
 
-        int sizeDelPop = (10 * sizePop) / 100;
+        int sizeDelPop = (PERCENTAGE_TO_REPRODUCTION * sizePop) / 100;
 
         if(sizeDelPop == 0){
             sizeDelPop = 1;
