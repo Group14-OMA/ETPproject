@@ -91,6 +91,23 @@ public class TestClass {
     }
 
 
+    static public void randomPopTest() {
+        Integer[][] C = new Integer[2][2];
+
+        //SETTING ALL CELLS TO 0
+        for(int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++)
+                C[i][j] = 0;
+        }
+
+        //SETTING CONFLICT
+        C[0][1] = 8;
+        C[1][0] = 8;
+
+        RandomPopGenerator randomPopGenerator = new RandomPopGenerator(C, 10000, 2, 8, 2);
+        randomPopGenerator.run();
+
+    }
 
 
 

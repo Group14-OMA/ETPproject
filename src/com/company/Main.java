@@ -1,4 +1,7 @@
 package com.company;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 //import test.PopulationGenerator;
@@ -10,6 +13,9 @@ public class Main {
 
     public static void main(String[] args) {
         // write your code here
+
+        /*TestClass.randomPopTest();
+        System.exit(0);*/
 
 
         Input inputProject;
@@ -77,16 +83,19 @@ public class Main {
         for(int i=0; i<exams.length;i++) exams[i]=i+1; 
 
         //Generating first population
-        PopulationGenerator Pop = new PopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());
-        Pop.generatePop();
-
+        //PopulationGenerator Pop = new PopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());
+        //Pop.generatePop();
+        RandomPopGenerator randomPopGenerator = new RandomPopGenerator(inputProject.getConflictMatrix(), 10000, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
+        randomPopGenerator.run();
 	    //Creating population Class
-	    Population p = new Population(Pop.getStudentNum(), Pop.getConflictMatrix(), Pop.getPopulation());
+	    Population p = new Population(inputProject.getStudentNumber(), inputProject.getConflictMatrix(), randomPopGenerator.getPopulation());
 
 	    //Generating and Starting tier 1
 	    Tier_1 tier_1 = new Tier_1(p, inputProject.getConflictMatrix());
         tier_1.first_tier();
         //System.exit(0);
+
+
     }
 
 }
@@ -98,6 +107,7 @@ class TimeTooLow extends Exception { }
 class InvalidArgumentNumber extends Exception { }
 
 class InsertTime extends Exception {}
+
 
 
 

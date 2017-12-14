@@ -1,6 +1,9 @@
 package com.company;
 
 import javax.print.attribute.standard.ReferenceUriSchemesSupported;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,8 +34,10 @@ public class Tier_1 {
     //Called by main to start generating new generations
     public void first_tier(){
 
+
+
             //while(true)
-            for(int i = 0; i < 500; i++) { //put this for to try testing, not that the algorithm slows down a lot around 50 cycles in. I haven't been able to make it run completly.
+            for(int i = 0; i < 10000; i++) { //put this for to try testing, not that the algorithm slows down a lot around 50 cycles in. I haven't been able to make it run completly.
                 //CALCULATING FITNESS AND ORDERING
                 fitnessCalc();
 
@@ -52,6 +57,8 @@ public class Tier_1 {
             for(ArrayList<Integer> gene : population.getChromosome(0).getGeneList()){
                 System.out.print(gene + "\t\t");
             }
+
+            output();
 
     }// end first_tier
 
@@ -204,6 +211,26 @@ public class Tier_1 {
         //SAME FOR CROSSOVER
 
     }// end runningThreads
+
+    //TODO: remove this once Francesco has created a proper output method
+    private void output(){
+
+        Chromosome bestChromosome = population.getChromosome(0);
+        Integer[] timeslotList = bestChromosome.getTimeSlotList();
+        PrintWriter writer = null;
+        try {
+            writer = new PrintWriter("output.sol", "UTF-8");
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        for(Integer i = 0; i < bestChromosome.getExamNum(); i ++){
+            writer.println((i+1) + " " + (timeslotList[i] + 1));
+
+        }
+        writer.close();
+    }
 
 }// end Tier_1
 
