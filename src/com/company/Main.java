@@ -10,7 +10,8 @@ public class Main {
 
     public static void main(String[] args) {
         // write your code here
-
+        //TestClass.annealingTest();
+        //System.exit(0);
 
         Input inputProject;
 
@@ -74,7 +75,13 @@ public class Main {
 
         //TestClass.chromosomesTest();
         Integer[] exams = new Integer[inputProject.getExamNumber()];
-        for(int i=0; i<exams.length;i++) exams[i]=i+1; 
+        for(int i=0; i<exams.length;i++) exams[i]=i+1;
+
+        //TEST
+        Annealing annealing = new Annealing(inputProject.getConflictMatrix(), 5, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
+        annealing.run();
+        System.exit(0);
+        //END TEST
 
         //Generating first population
         PopulationGenerator Pop = new PopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());

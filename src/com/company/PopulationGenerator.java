@@ -1,5 +1,7 @@
 package com.company;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class PopulationGenerator {
