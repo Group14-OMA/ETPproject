@@ -25,8 +25,8 @@ public class Genes{
         return myGeneList[timeslot].size();
     }
 
-    public ArrayList<Integer> timeslotList(int timeslot){
-        return myGeneList[timeslot];
+    public ArrayList<Integer> timeslotList(int myTimeslot){
+        return myGeneList[myTimeslot];
     }
 
     public void removeAll() {
