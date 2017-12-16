@@ -1,6 +1,8 @@
 package com.company;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class sortedPopulationGenerator {
 	private int counter=0; //testing
@@ -16,6 +18,7 @@ public class sortedPopulationGenerator {
     private Integer[][] conflictMatrix;
     private Integer[][] fastConflictMatrix;
     private Genes tempGeneList;
+    //private ArrayList<Integer>[] geneList = (ArrayList<Integer>[])new ArrayList[timeslot];
     private ArrayList<Genes> geneListCollection = new ArrayList<Genes>();
     private ArrayList<Genes> sortedGeneCollection = new ArrayList<Genes>();
     private ArrayList<Chromosome> population = new ArrayList<Chromosome>();
@@ -37,7 +40,7 @@ public class sortedPopulationGenerator {
     	//printSubsets();
     	sortExamArray();
     	//printSubsets();
-    	sortedGenerator();
+    	sortedGenerator(); //ALSO GENERATE THE POPULATION. POPULATION SIZE HARDCODE, SET TO 100
     	//printFastConflictMatrix();
     	//fastGenerator();
         //chromosomeGenerator();
@@ -61,6 +64,7 @@ public class sortedPopulationGenerator {
         this.conflictMatrix = conflictMatrix;
         this.fastConflictMatrix = new Integer[exams.length][timeslot];
         this.examArray= new Exam[exams.length];
+        //for(int i=0;i<timeslot;i++) this.geneList[i] = new ArrayList<Integer>();
         
         
     }
@@ -175,8 +179,34 @@ public class sortedPopulationGenerator {
     			System.out.println("unable to place: " + (i+1));	
     		}
     	}
+    	
+    	generateSortedPopulation(chromosome);
     	   	
     }
+    //GENERATE POPULATION BY SHUFFLING THE GROUPS BETWEEN TIMESLOT, NOT VERY GOOD BUT IT WORKS
+    public void generateSortedPopulation(Integer[] chromosome) {
+    	System.out.println("-----------------------------------------------");
+    	int populationSize=100;
+    	
+    	Genes myGene = new Genes(this.timeslot);
+    	Integer[] finalChromosome = new Integer[exams.length];
+		for (int i=0;i<exams.length;i++) finalChromosome[i]=chromosome[i];
+		myGene.chromosomeToGene(finalChromosome);
+		population.add(new Chromosome(this.timeslot,exams.length,this.studentNum,finalChromosome,myGene.geneList()));  	
+		
+    	for(int p=1;p<populationSize;p++) {
+    		shuffleArray(myGene.geneList());
+    		finalChromosome=myGene.chromosomeTranslation(finalChromosome);
+    		//print for testing shuffled solution
+    		for(int i=0;i<finalChromosome.length;i++) {
+        		//System.out.println((i+1)+" " + (chromosome[i]+1) + " subset: " + subsetColor[i]);
+        		System.out.println( (i+1) +" " + ((finalChromosome[i])+1));
+        	}
+    		population.add(new Chromosome(this.timeslot,exams.length,this.studentNum,finalChromosome,myGene.geneList()));   		
+    	} 	
+    }
+    
+    
     public boolean myChecker(Integer[] chromosome) {
     	int myTimeslot=0;
     	for(int i=0; i<chromosome.length;i++) {
@@ -540,6 +570,20 @@ public class sortedPopulationGenerator {
     	}
     	return;
     }
+    
+    public void shuffleArray(ArrayList[] ar)
+	{
+	    // If running on Java 6 or older, use `new Random()` on RHS here
+	    Random rnd = ThreadLocalRandom.current();
+	    for (int i = ar.length - 1; i > 0; i--)
+	    {
+	        int index = rnd.nextInt(i + 1);
+	        // Simple swap
+	        ArrayList<Integer> a = ar[index];
+	        ar[index] = ar[i];
+	        ar[i] = a;
+	    }
+	}
     	
 
 

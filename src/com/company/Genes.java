@@ -72,13 +72,19 @@ public class Genes{
     public Integer[] chromosomeTranslation(Integer[] chromosome) {
         for(int timeslot=0;timeslot<this.myGeneList.length; timeslot++) {
             for(int exam: this.myGeneList[timeslot]) {
-                //examIndex = exam-1;
                 chromosome[exam]=timeslot;
             }
         }
         return chromosome;
     }
-
+    
+    public void chromosomeToGene(Integer[] chromosome) {
+    	for(int i=0 ; i<chromosome.length ; i++) {
+    		this.myGeneList[chromosome[i]].add(i);    		
+    	}
+    	return;
+    }
+    
     public void printGene() {
         for(int timeslot=0;timeslot<this.myGeneList.length;timeslot++) {
             System.out.print("["+timeslot+"]");
