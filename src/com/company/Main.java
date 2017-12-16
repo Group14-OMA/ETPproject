@@ -10,7 +10,8 @@ public class Main {
 
     public static void main(String[] args) {
         // write your code here
-
+        //TestClass.annealingTest();
+        //System.exit(0);
 
         Input inputProject;
 
@@ -74,8 +75,21 @@ public class Main {
 
         //TestClass.chromosomesTest();
         Integer[] exams = new Integer[inputProject.getExamNumber()];
+        for(int i=0; i<exams.length;i++) exams[i]=i;
+        /*
+<<<<<<< HEAD
         for(int i=0; i<exams.length;i++) exams[i]=i+1; 
         
+=======
+        for(int i=0; i<exams.length;i++) exams[i]=i+1;
+
+        //TEST
+        Annealing annealing = new Annealing(inputProject.getConflictMatrix(), 5, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
+        annealing.run();
+        System.exit(0);
+        //END TEST
+
+>>>>>>> 6925701dcee1208d52094d423ca60f8f607489c8*/
         //Generating first population
         //PopulationGenerator Pop = new PopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());
         //Pop.conflictList();
@@ -89,13 +103,20 @@ public class Main {
 	    Population p = new Population(Pop.getStudentNum(), Pop.getConflictMatrix(), Pop.getPopulation());
 	    
 	    //Generating and Starting tier 1
-	    Tier_1 tier_1 = new Tier_1(p, inputProject.getConflictMatrix());
+	    Tier_1 tier_1 = new Tier_1(p, inputProject.getConflictMatrix(),args[0]);
         tier_1.first_tier();
+        /*
+<<<<<<< HEAD
         //System.exit(0);
          * 
          */
+        /*
         return;
          
+=======
+
+>>>>>>> 6925701dcee1208d52094d423ca60f8f607489c8
+            		*/
     }
 
 }

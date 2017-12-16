@@ -91,6 +91,45 @@ public class TestClass {
     }
 
 
+    static public void randomPopTest() {
+        Integer[][] C = new Integer[2][2];
+
+        //SETTING ALL CELLS TO 0
+        for(int i = 0; i < 2; i++) {
+            for (int j = 0; j < 2; j++)
+                C[i][j] = 0;
+        }
+
+        //SETTING CONFLICT
+        C[0][1] = 8;
+        C[1][0] = 8;
+
+        RandomPopGenerator randomPopGenerator = new RandomPopGenerator(C, 10000, 2, 8, 2);
+        randomPopGenerator.run();
+
+    }
+
+    static public void annealingTest() {
+        Integer[][] C = new Integer[4][4];
+
+        //SETTING ALL CELLS TO 0
+        for(int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++)
+                C[i][j] = 0;
+        }
+
+        //SETTING CONFLICT
+        C[0][1] = 2;
+        C[0][2] = 3;
+        C[1][0] = 2;
+        C[1][2] = 2;
+        C[2][0] = 3;
+        C[2][1] = 2;
+
+        Annealing annealing = new Annealing(C, 10000, 6, 8, 4);
+        annealing.run();
+
+    }
 
 
 

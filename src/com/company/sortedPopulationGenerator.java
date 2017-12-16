@@ -6,7 +6,7 @@ public class sortedPopulationGenerator {
 	private int counter=0; //testing
     private Integer[] exams;
     private Integer timeslot;
-    private Integer[] chromosome;
+    //private Integer[] chromosome;
     private Integer numberOfSubset;
     private Integer[] subsetsDimensions;
     private Integer studentNum;
@@ -36,7 +36,7 @@ public class sortedPopulationGenerator {
     	setExamArrayConflicts();
     	//printSubsets();
     	sortExamArray();
-    	printSubsets();
+    	//printSubsets();
     	sortedGenerator();
     	//printFastConflictMatrix();
     	//fastGenerator();
@@ -57,7 +57,7 @@ public class sortedPopulationGenerator {
         this.studentNum = studentNum;
         tempGeneList = new Genes(timeslot);
         this.conflictList = (ArrayList<Integer>[])new ArrayList[exams.length];
-        this.chromosome = new Integer[exams.length];
+        //this.chromosome = new Integer[exams.length];
         this.conflictMatrix = conflictMatrix;
         this.fastConflictMatrix = new Integer[exams.length][timeslot];
         this.examArray= new Exam[exams.length];
@@ -148,15 +148,15 @@ public class sortedPopulationGenerator {
     				}    				
     				if(explored) break;
     				//leave the section below commented out , im working on it 16/12/17
-    				/*
+    				
     				if(myTimeslot==(timeslot-1) && !explored) {
     					if(!outOfMyWay(e.getIndex(),chromosome,e)) {
-    						System.out.println("FAIL on exam: " + e.getIndex());
+    						System.out.println("FAIL on exam: " + (e.getIndex()+1));
     						//printFastConflictMatrix();
     						return;   					
     					}
     				
-    				}*/   			
+    				} 			
     			}
     		}
     		explored=false;
@@ -194,22 +194,73 @@ public class sortedPopulationGenerator {
     	}
     	return true;
     }
+    public boolean secondChecker(Integer[] chromosome) {
+    	for(int myTimeslot=0; myTimeslot<timeslot; myTimeslot++) {
+    		for(int index=0; index<chromosome.length; index++) {
+    			if(chromosome[index]==myTimeslot) {
+	    			for(int index2=0; index2<chromosome.length;index2++) {
+	    				if(index!=index2 && chromosome[index]==chromosome[index2] && doesConflict(index,index2)) {
+	    					return false;
+	    				}
+	    			}
+    			}
+    		}
+    	}
+    	return true;
+    }
     //repetition in the argument , must be fixed
+    //tutti i print e i vari checker sono solo per trouble shooting
     public boolean outOfMyWay(int examIndex,Integer[] chromosome,Exam e) {
+    	/*
+    	int counter=0;
+    	
+    	for(int j=0;j<timeslot;j++) {
+    		counter+=fastConflictMatrix[examIndex][j];
+    		System.out.print("<"+fastConflictMatrix[examIndex][j]+">");
+    	}
+    	System.out.println("  number: " + counter);
+    	*/
+    	counter=0;
+    	checkSum();
     	for(int myTimeslot=0;myTimeslot<this.timeslot;myTimeslot++) {  
 	    	for(int i=0;i<chromosome.length;i++) {
 	    		if(chromosome[i]==myTimeslot && doesConflict(examIndex,i)) { // i is the index of the exam to move out of the way
 	    			moveExam(i,myTimeslot,chromosome);
 	    		}
 	    	}
-	    	if(fastConflictMatrix[examIndex][myTimeslot]==0) {
+	    	//if (!secondChecker(chromosome)) {System.out.println("before placing");return false;}
+	    	if(!fastCheckConflict(examIndex,myTimeslot)) {
+	    		/*
+	    		checkSum();
+	    		System.out.println("myTimeslot=" + myTimeslot);
+	    		for(int j=0;j<timeslot;j++) {
+	        		counter+=fastConflictMatrix[examIndex][j];
+	        		System.out.print("<"+fastConflictMatrix[examIndex][j]+">");
+	        	}
+	        	System.out.println("  number: " + counter);
+	        	counter=0;
+	        	*/
 	    		fillFastConflictMatrix(examIndex,myTimeslot);
 	    		e.setPlaced(true);
-	    		chromosome[examIndex]=myTimeslot;	    		
+	    		chromosome[examIndex]=myTimeslot;	
+	    		
+	    		//if(!myChecker(chromosome)) {System.out.println("after placing");return false;}
+	    		
 	    		return true;
 	    	}
     	}
     	return false;
+    }
+    //checkSum , troubleshooting related
+    public void checkSum() {
+    	int sum=0;
+    	for(int i=0;i<exams.length;i++) {
+    		for(int j=0;j<timeslot;j++) {
+    			if(fastConflictMatrix[i][j]<0) System.out.println("LALALALALALAL");sum+=fastConflictMatrix[i][j];    			
+    		}
+    	}
+    	System.out.println("sum: " + sum);
+    	return;
     }
     
     public boolean doesConflict(int examIndex, int potentialConflict) {
@@ -219,7 +270,7 @@ public class sortedPopulationGenerator {
     	return false;
     	
     }
-    public void moveExam(int examIndex,int oldTimeslot,Integer[] chromsome) {
+    public void moveExam(int examIndex,int oldTimeslot,Integer[] chromosome) {
     	boolean moved=false;
     	for(int myTimeslot=0;myTimeslot<this.timeslot && moved==false ;myTimeslot++) {
     		if(myTimeslot!=oldTimeslot && !fastCheckConflict(examIndex,myTimeslot)) {
@@ -348,7 +399,7 @@ public class sortedPopulationGenerator {
     public void setTimeslot(Integer timeslot) {
         this.timeslot = timeslot;
     }
-
+    /*
     public Integer[] getChromosome() {
         return chromosome;
     }
@@ -356,7 +407,7 @@ public class sortedPopulationGenerator {
     public void setChromosome(Integer[] chromosome) {
         this.chromosome = chromosome;
     }
-
+	*/
     public Integer getNumberOfSubset() {
         return numberOfSubset;
     }
