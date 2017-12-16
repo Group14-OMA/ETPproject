@@ -25,7 +25,7 @@ public class sortedPopulationGenerator {
 
 
     public void generatePop(){
-    	System.out.println("GENERATING POPULATION");
+    	//System.out.println("GENERATING POPULATION");
 
     	conflictList();
     	//printConflictList();
@@ -163,7 +163,7 @@ public class sortedPopulationGenerator {
     		if(!myChecker(chromosome)) return;
     	}
     	//prints the cromosome in the format (exam - timeslot) so i can test it
-    	System.out.println("first chromosome:");
+    	//System.out.println("first chromosome:"); 
     	for(int i=0;i<chromosome.length;i++) {
     		//System.out.println((i+1)+" " + (chromosome[i]+1) + " subset: " + subsetColor[i]);
     		System.out.println( (i+1) +" " + ((chromosome[i])+1));
@@ -220,33 +220,37 @@ public class sortedPopulationGenerator {
     	}
     	System.out.println("  number: " + counter);
     	*/
-    	counter=0;
-    	checkSum();
-    	for(int myTimeslot=0;myTimeslot<this.timeslot;myTimeslot++) {  
-	    	for(int i=0;i<chromosome.length;i++) {
-	    		if(chromosome[i]==myTimeslot && doesConflict(examIndex,i)) { // i is the index of the exam to move out of the way
-	    			moveExam(i,myTimeslot,chromosome);
-	    		}
-	    	}
-	    	//if (!secondChecker(chromosome)) {System.out.println("before placing");return false;}
-	    	if(!fastCheckConflict(examIndex,myTimeslot)) {
-	    		/*
-	    		checkSum();
-	    		System.out.println("myTimeslot=" + myTimeslot);
-	    		for(int j=0;j<timeslot;j++) {
-	        		counter+=fastConflictMatrix[examIndex][j];
-	        		System.out.print("<"+fastConflictMatrix[examIndex][j]+">");
-	        	}
-	        	System.out.println("  number: " + counter);
-	        	counter=0;
-	        	*/
-	    		fillFastConflictMatrix(examIndex,myTimeslot);
-	    		e.setPlaced(true);
-	    		chromosome[examIndex]=myTimeslot;	
-	    		
-	    		//if(!myChecker(chromosome)) {System.out.println("after placing");return false;}
-	    		
-	    		return true;
+    	int numConflict; 
+    	for(numConflict=1;numConflict<exams.length;numConflict++) { //TRY TO MAKE SPACE IN THE TIMESLOTS WITH LESS CONFLICT
+    	//checkSum();
+	    	for(int myTimeslot=0;myTimeslot<this.timeslot;myTimeslot++) {
+	    		if(fastConflictMatrix[examIndex][myTimeslot]==numConflict) {
+			    	for(int i=0;i<chromosome.length;i++) {
+			    		if(chromosome[i]==myTimeslot && doesConflict(examIndex,i)) { // i is the index of the exam to move out of the way
+			    			moveExam(i,myTimeslot,chromosome);
+			    		}
+			    	}
+			    	//if (!secondChecker(chromosome)) {System.out.println("before placing");return false;}
+			    	if(!fastCheckConflict(examIndex,myTimeslot)) {
+			    		/*
+			    		checkSum();
+			    		System.out.println("myTimeslot=" + myTimeslot);
+			    		for(int j=0;j<timeslot;j++) {
+			        		counter+=fastConflictMatrix[examIndex][j];
+			        		System.out.print("<"+fastConflictMatrix[examIndex][j]+">");
+			        	}
+			        	System.out.println("  number: " + counter);
+			        	counter=0;
+			        	*/
+			    		fillFastConflictMatrix(examIndex,myTimeslot);
+			    		e.setPlaced(true);
+			    		chromosome[examIndex]=myTimeslot;	
+			    		
+			    		//if(!myChecker(chromosome)) {System.out.println("after placing");return false;}
+			    		
+			    		return true;
+			    	}
+		    	}
 	    	}
     	}
     	return false;
