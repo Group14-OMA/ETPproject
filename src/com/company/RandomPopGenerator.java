@@ -5,8 +5,10 @@ import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class RandomPopGenerator
+public class RandomPopGenerator implements Runnable
 {
+
+
 
     private Integer[][] conflictMatrix;
     private Integer populationSize;
@@ -30,7 +32,7 @@ public class RandomPopGenerator
     }
 
 
-
+    @Override
     public void run() {
         Boolean placed;
         Boolean feasable;

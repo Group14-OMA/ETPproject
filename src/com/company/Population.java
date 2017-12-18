@@ -20,6 +20,9 @@ public class Population {
         bestChromosome = Math.pow(2, 5) * this.studentNumber;       //Worst case. For sure a normal feasible solution will have a lower value.
     }
 
+    public Population(){
+        this(0, null, null);
+    }
 
     public double getBestObjectiveFunc() {
         return bestChromosome;
@@ -53,10 +56,34 @@ public class Population {
     }
 
     // ORDERING POPULATION BASED ON FITNESS, INCREASING ORDER
-    public void sortPopulation(){
+    public void sortPopulationFitness(){
         populationList.sort(Comparator.comparing(Chromosome::getFitness));
     }
 
+    // ORDERING POPULATION BASED ON OBJECTIVE FUNCTION, INCREASING ORDER
+    public void sortPopulationObjFunction(){
+        populationList.sort(Comparator.comparing(Chromosome::getObjFunc));
+    }
+
+    public void setPopulationList(ArrayList<Chromosome> populationList) {
+        this.populationList = populationList;
+    }
+
+    public Integer getStudentNumber() {
+        return studentNumber;
+    }
+
+    public void setStudentNumber(Integer studentNumber) {
+        this.studentNumber = studentNumber;
+    }
+
+    public Integer[][] getConflictMatrix() {
+        return conflictMatrix;
+    }
+
+    public void setConflictMatrix(Integer[][] conflictMatrix) {
+        this.conflictMatrix = conflictMatrix;
+    }
 
 }
 

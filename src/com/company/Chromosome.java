@@ -113,7 +113,4 @@ public class Chromosome {
         this.objFunc = value/this.studentNum;
     }
 
-    public void calculateFitness(){
-
-    }
 }
