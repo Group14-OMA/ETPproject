@@ -1,7 +1,4 @@
 package com.company;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -19,7 +16,8 @@ public class Main {
 
     public static void main(String[] args) {
         // write your code here
-
+        //TestClass.annealingTest();
+        //System.exit(0);
 
 
 
@@ -66,7 +64,11 @@ public class Main {
 
         inputProject=new Input(args[0]);
         inputProject.startInput();                          //Getting input from file
-
+        //TEST
+        //Annealing annealing = new Annealing(inputProject.getConflictMatrix(),500, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
+        //annealing.run();
+        //System.exit(0);
+        //END TEST
         //Test dell'input
         /*
         System.out.println("This is the input for the instance " + inputProject.getInstanceName());
@@ -134,6 +136,39 @@ public class Main {
         p.setPopulationList(chromosomes);
         return p;
 
+
+        for(int i=0; i<exams.length;i++) exams[i]=i;
+        /*
+
+        for(int i=0; i<exams.length;i++) exams[i]=i+1; 
+        
+
+        for(int i=0; i<exams.length;i++) exams[i]=i+1;
+
+        //TEST
+        Annealing annealing = new Annealing(inputProject.getConflictMatrix(), 5, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
+        annealing.run();
+        System.exit(0);
+        //END TEST
+
+        //Generating first population
+        //PopulationGenerator Pop = new PopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());
+        //Pop.conflictList();
+        //Pop.printConflictList();
+        //Pop.buildOptimizedConflictMatrix();
+        //Pop.printOptimizedConflictMatrix();
+        sortedPopulationGenerator sortedPop = new sortedPopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber(), 50);
+        sortedPop.generatePop();
+        System.exit(0);
+        /*
+	    //Creating population Class
+	    Population p = new Population(Pop.getStudentNum(), Pop.getConflictMatrix(), Pop.getPopulation());
+	    
+	    //Generating and Starting tier 1
+	    Tier_1 tier_1 = new Tier_1(p, inputProject.getConflictMatrix(),args[0]);
+        tier_1.first_tier();
+        /*
+
     }
 
 }
@@ -145,7 +180,6 @@ class TimeTooLow extends Exception { }
 class InvalidArgumentNumber extends Exception { }
 
 class InsertTime extends Exception {}
-
 
 
 

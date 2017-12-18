@@ -10,6 +10,7 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 
+
 public class Tier_1 {
 
     private final int PERCENTAGE_TO_REPRODUCTION = 10;
@@ -17,17 +18,21 @@ public class Tier_1 {
     private Population population;
     private ArrayList<Chromosome> reproductionPop;          //10% of starting populations used to generate new chromosome
     private Integer[][] C;
-
     private Random rng = new Random();
+    private String fileName;
+    private Random randomGenerator = new Random();
     private ExecutorService executorService;
 
     private Chromosome previousIterationBestChromosome = null;
 
 
     //CONSTRUCTOR
-    public Tier_1(Population population, Integer[][] C) {
+
+    public Tier_1(Population population, Integer[][] C,String instanceName){
         this.population = population;
         this.C = C;
+        fileName=instanceName + "_OMAAL_group14.sol";
+
     }
 
 
@@ -229,24 +234,26 @@ public class Tier_1 {
 
     }// END RUNNING_THREAD
 
-    //TODO: remove this once Francesco has created a proper output method
-    private void output(){
+    //AKA Daghero's Output function!!
+    private void output() {
+        Chromosome bestOne=population.getChromosome(0);
+        Integer[] timeslotList=bestOne.getTimeSlotList();
+        PrintWriter pw = null;
 
-        Chromosome bestChromosome = population.getChromosome(0);
-        Integer[] timeslotList = bestChromosome.getTimeSlotList();
-        PrintWriter writer = null;
+
         try {
-            writer = new PrintWriter("output.sol", "UTF-8");
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        for(Integer i = 0; i < bestChromosome.getExamNum(); i ++){
-            writer.println((i+1) + " " + (timeslotList[i] + 1));
 
+            pw=new PrintWriter(fileName);
+            for (int a=0; a < timeslotList.length; a++) {
+                pw.println( (a+1) + " " + (timeslotList[a] + 1));
+            }
+            pw.flush();
+            pw.close();
+
+        } catch (FileNotFoundException fnf) {
+            fnf.printStackTrace();
         }
-        writer.close();
+
     }
 
     //Set current population best chromosome

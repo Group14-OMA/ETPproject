@@ -109,6 +109,28 @@ public class TestClass {
 
     }
 
+    static public void annealingTest() {
+        Integer[][] C = new Integer[4][4];
+
+        //SETTING ALL CELLS TO 0
+        for(int i = 0; i < 4; i++) {
+            for (int j = 0; j < 4; j++)
+                C[i][j] = 0;
+        }
+
+        //SETTING CONFLICT
+        C[0][1] = 2;
+        C[0][2] = 3;
+        C[1][0] = 2;
+        C[1][2] = 2;
+        C[2][0] = 3;
+        C[2][1] = 2;
+
+        Annealing annealing = new Annealing(C, 10000, 6, 8, 4);
+        annealing.run();
+
+    }
+
 
 
 }
