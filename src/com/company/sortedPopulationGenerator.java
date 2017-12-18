@@ -495,7 +495,7 @@ public class sortedPopulationGenerator {
 			}
 
 		}
-
+		shuffleArray(geneList);
 
 		return new Chromosome(timeslot, examArray.length, studentNum, createTimeslotList(geneList), geneList);
 	}

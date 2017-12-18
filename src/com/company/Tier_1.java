@@ -22,6 +22,7 @@ public class Tier_1 {
     private String fileName;
     private Random randomGenerator = new Random();
     private ExecutorService executorService;
+    private Boolean continueLoop;
 
     private Chromosome previousIterationBestChromosome = null;
 
@@ -32,16 +33,17 @@ public class Tier_1 {
         this.population = population;
         this.C = C;
         fileName=instanceName + "_OMAAL_group14.sol";
+        continueLoop = true;
 
     }
 
 
     //Called by main to start generating new generations
     public void first_tier() {
+        Integer i = 0;
 
-
-        //while(true)
-        for (int i = 0; i < 10000; i++) { //put this for to try testing, not that the algorithm slows down a lot around 50 cycles in. I haven't been able to make it run completly.
+        while(continueLoop){
+        //for (int i = 0; i < 10000; i++) { //put this for to try testing, not that the algorithm slows down a lot around 50 cycles in. I haven't been able to make it run completly.
             //CALCULATING FITNESS AND ORDERING
             fitnessCalc();
 
@@ -55,7 +57,7 @@ public class Tier_1 {
 
             //AS SOON AS ALL THREADS HAVE TERMINATED, WRITE TO FILE.
             //TODO Daghero's Output class
-
+            i++;
             System.out.println(i);
         }
         System.out.println("Done");
@@ -263,6 +265,10 @@ public class Tier_1 {
 
         //SELECTING BEST CHROMOSOME IN THIS POPULATION
         previousIterationBestChromosome = this.population.getChromosome(0);
+    }
+
+    public void stopLoop(){
+        this.continueLoop = false;
     }
 
 }// end Tier_1
