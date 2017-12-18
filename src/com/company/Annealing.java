@@ -1,7 +1,5 @@
 package com.company;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
@@ -28,10 +26,13 @@ public class Annealing {
     }
 
     public void run(){
+Random rnd = ThreadLocalRandom.current();
         ArrayList<Integer>[] newPopulation;
+        Integer oldConflicts = 0;
+        Integer repeats = 0;
         Integer x;
-        Double temperature = 10000.0;
-        Double coolingRate = 0.000003;
+        Double temperature = 100.0;
+        Double coolingRate = 0.003;
 
         //create an unfeasable starting point
         greedyGenerator();
@@ -41,9 +42,25 @@ public class Annealing {
 
         System.out.println(x);
 
-        while(x != 0){
+        while(x != 0) {
             Integer newX;
-            newPopulation = modifyPopulation();
+
+            if(oldConflicts == x){
+                repeats++;
+            }else{
+                repeats = 0;
+                oldConflicts = x;
+
+            }
+
+            if(repeats == 70*numExams) {
+                newPopulation = modifyPopulationGroupMove();
+                temperature *= 1-coolingRate;
+            }else{
+                newPopulation = modifyPopulationMutation();
+            }
+
+
             newX = numberOfConflicts(newPopulation);
 
             if(probability(temperature, x, newX) > 0.8){
@@ -51,9 +68,16 @@ public class Annealing {
                 x = newX;
             }
 
-            temperature *= 1-coolingRate;
+
             System.out.println("Temp: " + temperature + "\t\tConflicts: " + x);
         }
+
+        Integer[] timeslotList = createTimeslotList(population);
+        for(Integer i = 0; i < numExams; i++){
+            System.out.println((i+1) + " " + (timeslotList[i]+1));
+        }
+
+
 
     }
 
@@ -89,7 +113,7 @@ public class Annealing {
         return prob;
     }
 
-    private ArrayList<Integer>[] modifyPopulation(){
+    private ArrayList<Integer>[] modifyPopulationSwap(){
         Random rnd = ThreadLocalRandom.current();
         ArrayList<Integer>[] newPopulation = this.population;
         Boolean repeat = false;
@@ -122,10 +146,10 @@ public class Annealing {
         return newPopulation;
     }
 
-    private ArrayList<Integer>[] modifyPopulation2(){
+    private ArrayList<Integer>[] modifyPopulationGroupMove(){
         Random rnd = ThreadLocalRandom.current();
         ArrayList<Integer>[] newPopulation = this.population;
-        Integer i = rnd.nextInt(20);
+        Integer i = rnd.nextInt((Integer)numExams/5);
         for(; i > 0; i--){
             Integer timeslot = rnd.nextInt(tmax);
             if(population[timeslot].size() != 0) {
@@ -133,6 +157,46 @@ public class Annealing {
                 newPopulation[timeslot].remove(exam);
                 newPopulation[rnd.nextInt(tmax)].add(exam);
             }
+        }
+
+        return newPopulation;
+    }
+
+    private ArrayList<Integer>[] modifyPopulationMutation(){
+        Random rnd = ThreadLocalRandom.current();
+        ArrayList<Integer>[] newPopulation = this.population;
+        Integer[] randomTimeslot = new Integer[tmax];
+        Integer timeslot;
+        Integer moveExam;
+
+        timeslot = rnd.nextInt(tmax);
+        for(Integer i = 0; i < tmax; i++){
+            randomTimeslot[i] = i;
+        }
+
+        shuffleArray(randomTimeslot);
+
+
+        if(newPopulation[timeslot].size() != 0){
+            Integer i = 0;
+            Boolean set = false;
+            moveExam = newPopulation[timeslot].get(rnd.nextInt(newPopulation[timeslot].size()));
+            while(set == false && i < tmax){
+                set = true;
+                for(Integer exam : newPopulation[randomTimeslot[i]]){
+                    if(conflictMatrix[moveExam][exam] != 0){
+                        set = false;
+                    }
+                }
+
+                //moveExam can be moved to this slot
+                if(set == true){
+                    newPopulation[timeslot].remove(moveExam);
+                    newPopulation[randomTimeslot[i]].add(moveExam);
+                }
+                i++;
+            }
+
         }
 
         return newPopulation;
@@ -213,6 +277,32 @@ public class Annealing {
 
 
         System.out.println("break");
+    }
+
+    // Implementing Fisher–Yates shuffle
+    private void shuffleArray(Integer[] ar) {
+        // If running on Java 6 or older, use `new Random()` on RHS here
+        Random rnd = ThreadLocalRandom.current();
+        for (int i = ar.length - 1; i > 0; i--)
+        {
+            int index = rnd.nextInt(i + 1);
+            // Simple swap
+            Integer a = ar[index];
+            ar[index] = ar[i];
+            ar[i] = a;
+        }
+    }
+
+    private Integer[] createTimeslotList(ArrayList<Integer>[] geneList){
+        Integer[] timeslotList = new Integer[numExams];
+
+        for(Integer i = 0 ; i < tmax; i++){
+            for(Integer exam : geneList[i]){
+                timeslotList[exam] = i;
+            }
+        }
+
+        return timeslotList;
     }
 
 

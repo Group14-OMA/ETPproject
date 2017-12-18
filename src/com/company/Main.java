@@ -58,7 +58,11 @@ public class Main {
 
         inputProject=new Input(args[0]);
         inputProject.startInput();                          //Getting input from file
-
+        //TEST
+        //Annealing annealing = new Annealing(inputProject.getConflictMatrix(),500, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
+        //annealing.run();
+        //System.exit(0);
+        //END TEST
         //Test dell'input
         /*
         System.out.println("This is the input for the instance " + inputProject.getInstanceName());
@@ -96,8 +100,9 @@ public class Main {
         //Pop.printConflictList();
         //Pop.buildOptimizedConflictMatrix();
         //Pop.printOptimizedConflictMatrix();
-        sortedPopulationGenerator sortedPop = new sortedPopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());
+        sortedPopulationGenerator sortedPop = new sortedPopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber(), 50);
         sortedPop.generatePop();
+        System.exit(0);
         /*
 	    //Creating population Class
 	    Population p = new Population(Pop.getStudentNum(), Pop.getConflictMatrix(), Pop.getPopulation());

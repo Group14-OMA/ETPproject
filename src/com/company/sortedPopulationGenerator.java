@@ -24,6 +24,9 @@ public class sortedPopulationGenerator {
     private ArrayList<Chromosome> population = new ArrayList<Chromosome>();
     private Exam[] examArray;
 
+    private Integer populationSize;
+
+
     
 
 
@@ -40,7 +43,7 @@ public class sortedPopulationGenerator {
     	//printSubsets();
     	sortExamArray();
     	//printSubsets();
-    	sortedGenerator(); //ALSO GENERATE THE POPULATION. POPULATION SIZE HARDCODE, SET TO 100
+    	sortedGenerator(); //ALSO GENERATE THE POPULATION. POPULATION SIZE DEFINED BY populationSize
     	//printFastConflictMatrix();
     	//fastGenerator();
         //chromosomeGenerator();
@@ -54,7 +57,7 @@ public class sortedPopulationGenerator {
 
     
     
-    public sortedPopulationGenerator(Integer[] exams, Integer timeslot, Integer[][] conflictMatrix, Integer studentNum) {
+    public sortedPopulationGenerator(Integer[] exams, Integer timeslot, Integer[][] conflictMatrix, Integer studentNum, Integer populationSize) {
         this.timeslot = timeslot;
         this.exams = exams;
         this.studentNum = studentNum;
@@ -65,7 +68,7 @@ public class sortedPopulationGenerator {
         this.fastConflictMatrix = new Integer[exams.length][timeslot];
         this.examArray= new Exam[exams.length];
         //for(int i=0;i<timeslot;i++) this.geneList[i] = new ArrayList<Integer>();
-        
+        this.populationSize = populationSize;
         
     }
     
@@ -180,7 +183,9 @@ public class sortedPopulationGenerator {
     		}
     	}
     	
-    	generateSortedPopulation(chromosome);
+    	//generateSortedPopulation(chromosome);
+		generatePopulation(chromosome);
+		//create a population
     	   	
     }
     //GENERATE POPULATION BY SHUFFLING THE GROUPS BETWEEN TIMESLOT, NOT VERY GOOD BUT IT WORKS
@@ -413,6 +418,115 @@ public class sortedPopulationGenerator {
         }
         return;
     }
+
+    private void generatePopulation(Integer[] examArray){
+		//generate geneList
+		ArrayList<Integer>[] geneList = new ArrayList[timeslot];
+
+		for(Integer i = 0; i < timeslot; i++){
+			geneList[i] = new ArrayList<>();
+		}
+
+		for(int i=0;i<examArray.length;i++) {
+			geneList[examArray[i]].add(i);
+		}
+
+		//Create the chromosome and add it to the population
+		Chromosome newChromosome = new Chromosome(timeslot, examArray.length, studentNum, examArray, geneList);
+		newChromosome.updateObjectiveFunction(conflictMatrix);
+		population.add(newChromosome);
+
+		for(Integer i = 1; i < populationSize; i++){
+			Chromosome shuffledChromosome;
+			shuffledChromosome = shuffleChromosome(geneList);
+			shuffledChromosome.updateObjectiveFunction(conflictMatrix);
+
+			for(int j=0;j<shuffledChromosome.getTimeSlotList().length;j++) {
+				//System.out.println((i+1)+" " + (chromosome[i]+1) + " subset: " + subsetColor[i]);
+				System.out.println( (j+1) +" " + ((shuffledChromosome.getTimeSlotList()[j])+1));
+			}
+
+			population.add(shuffledChromosome);
+		}
+
+	}
+
+	private Chromosome shuffleChromosome(ArrayList<Integer>[] geneList){
+		Random rnd = ThreadLocalRandom.current();
+		for(Integer i = 0; i < 50*exams.length; i++){
+			Integer[] randomTimeslotArray = new Integer[timeslot];
+			Integer moveTimeslot = rnd.nextInt(timeslot);
+
+			for(Integer j = 0; j < timeslot; j++){
+				randomTimeslotArray[j] = j;
+			}
+			shuffleArray(randomTimeslotArray);
+
+
+			if(geneList[moveTimeslot].size() > 0){
+				//choose the exam to move
+				Integer moveExam = geneList[moveTimeslot].get(rnd.nextInt(geneList[moveTimeslot].size()));
+
+				//find a new timeslot to place the exam in
+				Integer count = 0;
+				Boolean placed = false;
+				while(count < timeslot && placed == false){
+					if(randomTimeslotArray[count] != moveTimeslot){
+						//I am not placeing the exam in the same timeslot
+						Boolean conflicts = false;
+						for(Integer exam : geneList[randomTimeslotArray[count]]){
+							if(conflictMatrix[moveExam][exam] != 0){
+								conflicts = true;
+							}
+						}
+
+						if(conflicts != true){
+							placed = true;
+							geneList[randomTimeslotArray[count]].add(moveExam);
+							geneList[moveTimeslot].remove(moveExam);
+						}
+
+					}
+
+					count++;
+				}
+
+
+			}
+
+		}
+
+
+		return new Chromosome(timeslot, examArray.length, studentNum, createTimeslotList(geneList), geneList);
+	}
+
+
+	private Integer[] createTimeslotList(ArrayList<Integer>[] geneList){
+		Integer[] timeslotList = new Integer[exams.length];
+
+		for(Integer i = 0 ; i < timeslot; i++){
+			for(Integer exam : geneList[i]){
+				timeslotList[exam] = i;
+			}
+		}
+
+		return timeslotList;
+	}
+
+	private void shuffleArray(Integer[] ar) {
+		// If running on Java 6 or older, use `new Random()` on RHS here
+		Random rnd = ThreadLocalRandom.current();
+		for (int i = ar.length - 1; i > 0; i--)
+		{
+			int index = rnd.nextInt(i + 1);
+			// Simple swap
+			Integer a = ar[index];
+			ar[index] = ar[i];
+			ar[i] = a;
+		}
+	}
+
+
 
 
 
