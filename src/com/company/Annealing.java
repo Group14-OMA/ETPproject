@@ -26,13 +26,13 @@ public class Annealing {
     }
 
     public void run(){
-Random rnd = ThreadLocalRandom.current();
+        Random rnd = ThreadLocalRandom.current();
         ArrayList<Integer>[] newPopulation;
         Integer oldConflicts = 0;
         Integer repeats = 0;
         Integer x;
-        Double temperature = 100.0;
-        Double coolingRate = 0.003;
+        Double temperature = 1000.0;
+        Double coolingRate = 0.000003;
 
         //create an unfeasable starting point
         greedyGenerator();
@@ -55,7 +55,7 @@ Random rnd = ThreadLocalRandom.current();
 
             if(repeats == 70*numExams) {
                 newPopulation = modifyPopulationGroupMove();
-                temperature *= 1-coolingRate;
+
             }else{
                 newPopulation = modifyPopulationMutation();
             }
@@ -70,6 +70,7 @@ Random rnd = ThreadLocalRandom.current();
 
 
             System.out.println("Temp: " + temperature + "\t\tConflicts: " + x);
+            temperature *= 1-coolingRate;
         }
 
         Integer[] timeslotList = createTimeslotList(population);
@@ -105,6 +106,18 @@ Random rnd = ThreadLocalRandom.current();
         }
         //each conflict is counted twice, once for each exam
         return conflicts/2;
+    }
+
+    private Integer numberOfConflictsTimeslot(ArrayList<Integer> gene){
+        Integer conflicts = 0;
+        for(Integer exam1 : gene){
+            for(Integer exam2 : gene){
+                if(exam1 != exam2 && conflictMatrix[exam1][exam2] != 0){
+                    conflicts++;
+                }
+            }
+        }
+        return conflicts;
     }
 
     private Double probability(Double temperature, Integer x, Integer xNew){
@@ -149,7 +162,7 @@ Random rnd = ThreadLocalRandom.current();
     private ArrayList<Integer>[] modifyPopulationGroupMove(){
         Random rnd = ThreadLocalRandom.current();
         ArrayList<Integer>[] newPopulation = this.population;
-        Integer i = rnd.nextInt((Integer)numExams/5);
+        Integer i = rnd.nextInt((Integer)2*numExams);
         for(; i > 0; i--){
             Integer timeslot = rnd.nextInt(tmax);
             if(population[timeslot].size() != 0) {
@@ -195,6 +208,32 @@ Random rnd = ThreadLocalRandom.current();
                     newPopulation[randomTimeslot[i]].add(moveExam);
                 }
                 i++;
+            }
+
+            if(set == false){
+                //couldn't find a slot without conflicts -> place in slot with least conflicts
+
+                //find timeslot with least conflicts for moveExam
+
+                Integer numConflicts = 0;
+                Integer bestTimeslot = 0;
+                for(i = 0; i < tmax; i++){
+                    ArrayList<Integer> newGene = (ArrayList<Integer>) newPopulation[i].clone();
+                    if(i != timeslot) {
+                        newGene.add(moveExam);
+                    }
+                    Integer newNumberOfConflicts = numberOfConflictsTimeslot(newGene);
+                    if(i == 0 || numConflicts > newNumberOfConflicts){
+                        //fewer conflicts in this timeslot
+                        numConflicts = newNumberOfConflicts;
+                        bestTimeslot =  i;
+                    }
+
+                }
+
+                //place exam in best timeslot
+                newPopulation[timeslot].remove(moveExam);
+                newPopulation[bestTimeslot].add(moveExam);
             }
 
         }

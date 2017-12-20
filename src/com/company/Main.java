@@ -60,7 +60,7 @@ public class Main {
         inputProject=new Input(args[0]);
         inputProject.startInput();                          //Getting input from file
         //TEST
-        //Annealing annealing = new Annealing(inputProject.getConflictMatrix(),500, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
+        //Annealing2 annealing = new Annealing2(inputProject.getConflictMatrix(),500, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
         //annealing.run();
         //System.exit(0);
         //END TEST
