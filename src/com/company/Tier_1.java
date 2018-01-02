@@ -25,6 +25,7 @@ public class Tier_1 {
     private Boolean continueLoop;
 
     private Chromosome previousIterationBestChromosome = null;
+    private Boolean chromosomeHasChanged = false;
 
 
     //CONSTRUCTOR
@@ -42,8 +43,8 @@ public class Tier_1 {
     public void first_tier() {
         Integer i = 0;
 
-        while(continueLoop){
-        //for (int i = 0; i < 10000; i++) { //put this for to try testing, not that the algorithm slows down a lot around 50 cycles in. I haven't been able to make it run completly.
+        //while(continueLoop){
+        for (int y = 0; y < 10000; y++) { //put this for to try testing, not that the algorithm slows down a lot around 50 cycles in. I haven't been able to make it run completly.
             //CALCULATING FITNESS AND ORDERING
             fitnessCalc();
 
@@ -60,7 +61,7 @@ public class Tier_1 {
             output();
 
             i++;
-            System.out.println(i);
+            //System.out.println(i);
         }
         System.out.println("Done");
         System.out.println("ObjFunc: " + previousIterationBestChromosome.getObjFunc());
@@ -117,7 +118,8 @@ public class Tier_1 {
             sizeReprPop = 1;
         }
 
-        for(int i = sizePop - 1; i > sizePop - sizeReprPop; i--){
+        //CHANGED i > sizePop - ... to i >= sizePop - ... to avoid making the population smaller than the initial population size.
+        for(int i = sizePop - 1; i >= sizePop - sizeReprPop; i--){
             this.reproductionPop.add(population.getPopulationList().get(i));
         }
 
@@ -142,12 +144,62 @@ public class Tier_1 {
         }
 
         //Delete worst chromosomes. 10% starting from the top of the population ordered based on increasing fitness
-        for(int i = 0; i < sizeDelPop; i++){
+        /*for(int i = 0; i < sizeDelPop; i++){
             this.population.removeChromosome(i);
         }
 
         if(this.previousIterationBestChromosome != null){
             this.population.addChromosome(this.previousIterationBestChromosome);
+        }*/
+        Integer i = 0;
+        Integer j = 0;
+        while(i < sizeDelPop){
+            if(previousIterationBestChromosome != null && this.population.getChromosome(j).getObjFunc() != previousIterationBestChromosome.getObjFunc()){
+                //this is not the best chromosome, we can delete it
+                this.population.removeChromosome(j);
+                i++;
+            }else if (previousIterationBestChromosome == null){
+                this.population.removeChromosome(j);
+                i++;
+            }
+            j++;
+        }
+    } // end deleteChromosome
+
+    private void deleteChromosomes2(Integer sizeDelPop){
+
+        int sizePop = population.getPopulationList().size();
+
+        if(sizePop == 1){
+            return;
+        }
+
+        //sizeDelPop = (PERCENTAGE_TO_REPRODUCTION * sizePop) / 100;
+
+        //if(sizeDelPop == 0){
+            //sizeDelPop = 1;
+        //}
+
+        //Delete worst chromosomes. 10% starting from the top of the population ordered based on increasing fitness
+        /*for(int i = 0; i < sizeDelPop; i++){
+            this.population.removeChromosome(i);
+        }
+
+        if(this.previousIterationBestChromosome != null){
+            this.population.addChromosome(this.previousIterationBestChromosome);
+        }*/
+        Integer i = 0;
+        Integer j = 0;
+        while(i < sizeDelPop){
+            if(previousIterationBestChromosome != null && this.population.getChromosome(j).getObjFunc() != previousIterationBestChromosome.getObjFunc()){
+                //this is not the best chromosome, we can delete it
+                this.population.removeChromosome(j);
+                i++;
+            }else if (previousIterationBestChromosome == null){
+                this.population.removeChromosome(j);
+                i++;
+            }
+            j++;
         }
     } // end deleteChromosome
 
@@ -172,6 +224,7 @@ public class Tier_1 {
 
 
         //Creation of threads, passing values
+        //TODO:why reproductionPop - 1? this causes the populationSize to slowly decrease
         for(int i = 0; i < reproductionPop.size() - 1; i++) {
 
             switch (sentinel){
@@ -209,7 +262,8 @@ public class Tier_1 {
         executorService.shutdown();
 
         //DELETE A PERCENTAGE OF ORIGINAL POPULATION
-        deleteChromosomes();
+        //deleteChromosomes();
+        deleteChromosomes2(mutationThreads.size() + (crossOverThreads.size() * 2) + timeSlotSwapThreads.size());
 
 
         //WAIT FOR ALL THREADS TO COMPLETE
@@ -253,6 +307,20 @@ public class Tier_1 {
             }
         }//end for
 
+        //ALL THREADS COMPLETED, IT CHECKS IF THERE ARE SOME DUPLICATE. IT ADDS NEW CHROMOSOMES ONLY IF THEY ARE UNIQUE
+        for(TimeslotSwap t : timeSlotSwapThreads){
+            boolean canInsert = true;
+            for(Chromosome c : population.getPopulationList()){
+                if(c.getTimeSlotList().equals(t.getChromosome().getTimeSlotList())){
+                    canInsert = false;
+                    break;
+                }
+            }
+            if(canInsert){
+                this.population.addChromosome(t.getChromosome());
+            }
+        }
+
     }// END RUNNING_THREAD
 
     //AKA Daghero's Output function!!
@@ -284,6 +352,8 @@ public class Tier_1 {
 
         //SELECTING BEST CHROMOSOME IN THIS POPULATION
         previousIterationBestChromosome = this.population.getChromosome(0);
+        System.out.println(this.population.getChromosome(0).getObjFunc());
+        chromosomeHasChanged = true;
     }
 
     public void stopLoop(){
