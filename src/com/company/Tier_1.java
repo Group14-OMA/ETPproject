@@ -57,6 +57,7 @@ public class Tier_1 {
 
             //AS SOON AS ALL THREADS HAVE TERMINATED, WRITE TO FILE.
             //TODO Daghero's Output class
+            output();
 
             i++;
             System.out.println(i);
@@ -90,7 +91,7 @@ public class Tier_1 {
 
 
         //THE BEST SOLUTION WILL HAVE FITNESS 1, SO ALL OTHERS SOLUTIONS SHOULD HAVE AN HIGHER VALUE
-        //ORDERING IN INCREASING ORDER WILL LEAVE THE BEST CHROMOSME AS FIRST
+        //ORDERING IN INCREASING ORDER WILL LEAVE THE WORSE CHROMOSME AS FIRST
         for (Chromosome c : this.population.getPopulationList()) {
             //The higher the obj function the lower the probability to reproduce
             //The bigger the fitness the higher the probability to reproduce
@@ -101,6 +102,7 @@ public class Tier_1 {
         }// end for
         this.population.sortPopulationFitness();
     }// end fitnessCalc
+
 
     //It takes the best 10% chromosomes from the total population, plus the best one
     private void selectReproductionPop(){
