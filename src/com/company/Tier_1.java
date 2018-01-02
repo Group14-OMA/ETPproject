@@ -57,6 +57,7 @@ public class Tier_1 {
 
             //AS SOON AS ALL THREADS HAVE TERMINATED, WRITE TO FILE.
             //TODO Daghero's Output class
+
             i++;
             System.out.println(i);
         }
@@ -158,32 +159,48 @@ public class Tier_1 {
         //To keep track of running threads and being able to recover results
         ArrayList<Mutation> mutationThreads = new ArrayList<>();
         ArrayList<CrossOver> crossOverThreads = new ArrayList<>();
+        ArrayList<TimeslotSwap> timeSlotSwapThreads = new ArrayList<>();
 
 
 
         //sentinel = 1 ---> Crossover
         //sentinel = 0 ---> Mutation
-        boolean sentinel = rng.nextBoolean();
+        int sentinel = rng.nextInt(3);
 
 
 
         //Creation of threads, passing values
         for(int i = 0; i < reproductionPop.size() - 1; i++) {
 
-            if (sentinel) {
-                //STARTING MUTATION
-                Mutation m = new Mutation(reproductionPop.get(i), C);
-                mutationThreads.add(m);
-                executorService.submit(m);
-                sentinel = false;
-            } else {
-                //CROSSOVER METHOD
-                CrossOver c = new CrossOver(reproductionPop.get(i), reproductionPop.get(i + 1), this.C);
-                crossOverThreads.add(c);
-                executorService.submit(c);
-                i++;
-                sentinel = true;
+            switch (sentinel){
+
+                case 0:
+                    //STARTING MUTATION
+                    Mutation m = new Mutation (reproductionPop.get(i), this.C);
+                    mutationThreads.add(m);
+                    executorService.submit(m);
+                    sentinel = rng.nextInt(3);
+                    break;
+                case 1:
+                    //STARTING CROSSOVER
+                    CrossOver c = new CrossOver(reproductionPop.get(i), reproductionPop.get(i + 1), this.C);
+                    crossOverThreads.add(c);
+                    executorService.submit(c);
+                    i++;                                                //I have used 2 chromosomes, i need to increment i 2 times
+                    sentinel = rng.nextInt(3);
+                    break;
+                case 2:
+                    //STARTING TIMESLOTSWAP
+                    TimeslotSwap t = new TimeslotSwap(reproductionPop.get(i), this.C);
+                    timeSlotSwapThreads.add(t);
+                    executorService.submit(t);
+                    sentinel = rng.nextInt(3);
+                    break;
+
             }
+
+
+
         }//end for
 
         //no new tasks runned
