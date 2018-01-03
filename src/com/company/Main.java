@@ -1,5 +1,8 @@
 package com.company;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 //import test.PopulationGenerator;
 
@@ -70,11 +73,39 @@ public class Main {
         for(int i=0; i<exams.length;i++) exams[i]=i;
 
         System.out.println("Generating an initial population...");
-        sortedPopulationGenerator sortedPop = new sortedPopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber(), 500);
-        sortedPop.generatePop();
 
-        //Creating population Class
-        Population p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), sortedPop.getPopulation());
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        Population p = null;
+        sortedPopulationGenerator sortedPop = new sortedPopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber(), 500);
+        Annealing2 annealing = new Annealing2(inputProject.getConflictMatrix(),500, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
+        executorService.submit(sortedPop);
+        executorService.submit(annealing);
+
+        executorService.shutdown();
+
+        Boolean waitingForPop = true;
+        while (waitingForPop){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            if(sortedPop.getSolFound()){
+                annealing.endAnnealing();
+                try{
+                    executorService.awaitTermination(10, TimeUnit.MINUTES);
+                }catch (InterruptedException i){
+                    System.out.println(i.getMessage());
+                }
+                p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), sortedPop.getPopulation());
+                waitingForPop = false;
+            }else if(annealing.getPopGenerated()){
+                p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), annealing.getChromosomesPop());
+            }
+        }
+
+        //sortedPop.generatePop();
+
 
         //Generating and Starting tier 1
         System.out.println("Finding best solution...");

@@ -14,7 +14,7 @@ public class sortedPopulationGenerator implements Runnable{
     private Integer studentNum;
     private ArrayList<Integer>[] conflictList;
 
-
+	private Boolean solFound = false;
 	private Boolean popGenerated = false;
 
 
@@ -196,6 +196,7 @@ public class sortedPopulationGenerator implements Runnable{
     	}
     	
     	//generateSortedPopulation(chromosome);
+		solFound = true;
 		generatePopulation(chromosome);
 		popGenerated = true;
 		//create a population
@@ -712,6 +713,9 @@ public class sortedPopulationGenerator implements Runnable{
 	    }
 	}
 
+	public Boolean getSolFound() {
+		return solFound;
+	}
 
 
 }
