@@ -114,6 +114,8 @@ public class Chromosome {
         for(Integer i = 0; i < this.tmax; i++) {
             ArrayList<Integer> exams = this.getGene(i);
             for (Integer exam : exams) {
+                //make sure that timeslotList is correct
+                timeSlotList[exam] = i;
                 for (Integer j = i + 1; j < i + 6 && j < tmax; j++) {
                     if (this.getGene(j) != null) {
                         for (Integer exam2 : this.getGene(j)) {

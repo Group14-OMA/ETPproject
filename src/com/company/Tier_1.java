@@ -72,9 +72,10 @@ public class Tier_1 {
         for (ArrayList<Integer> gene : previousIterationBestChromosome.getGeneList()) {
             System.out.println(gene);
         }
-        for(int k = 0; k < previousIterationBestChromosome.getExamNum(); k++){
-            System.out.println((k+1) + " " + (previousIterationBestChromosome.getExamTimeslot(k) + 1));
-        }
+        System.out.println("PopSize : " + population.getPopulationList().size());
+        //for(int k = 0; k < previousIterationBestChromosome.getExamNum(); k++){
+            //System.out.println((k+1) + " " + (previousIterationBestChromosome.getExamTimeslot(k) + 1));
+        //}
 
         //output();
 
@@ -199,7 +200,7 @@ public class Tier_1 {
 
         //To keep track of running threads and being able to recover results
         ArrayList<Mutation> mutationThreads = new ArrayList<>();
-        ArrayList<CrossOver> crossOverThreads = new ArrayList<>();
+        ArrayList<CrossOver2> crossOverThreads = new ArrayList<>();
         ArrayList<TimeslotSwap> timeSlotSwapThreads = new ArrayList<>();
 
 
@@ -224,7 +225,7 @@ public class Tier_1 {
                     break;
                 case 1:
                     //STARTING CROSSOVER
-                    CrossOver c = new CrossOver(reproductionPop.get(i), reproductionPop.get(i + 1), this.C);
+                    CrossOver2 c = new CrossOver2(reproductionPop.get(i), reproductionPop.get(i + 1), this.C);
                     crossOverThreads.add(c);
                     executorService.submit(c);
                     i++;                                                //I have used 2 chromosomes, i need to increment i 2 times
@@ -276,12 +277,12 @@ public class Tier_1 {
                 newChromosomeList.add(m.getChromosome());
                 addedChromosomes++;
             }else if (!m.getChromosome().isValid(C)){
-                System.out.println("MUTATION ERROR");
+                //System.out.println("MUTATION ERROR");
             }
         }
 
         //ALL THREADS COMPLETED, IT CHECKS IF THERE ARE SOME DUPLICATE. IT ADDS NEW CHROMOSOMES ONLY IF THEY ARE UNIQUE
-        for(CrossOver crv : crossOverThreads){
+        for(CrossOver2 crv : crossOverThreads){
             boolean canInsert = true;
             for(Chromosome c : population.getPopulationList()) {
                 if (c.getTimeSlotList().equals(crv.getC1().getTimeSlotList())) {
@@ -298,14 +299,14 @@ public class Tier_1 {
                     newChromosomeList.add(crv.getC1());
                     addedChromosomes++;
                 }else{
-                    System.out.println("CROSSOVER ERROR");
+                    //System.out.println("CROSSOVER ERROR");
                 }
                 if(crv.getC2().isValid(C)) {
                     //this.population.addChromosome(crv.getC2());
                     newChromosomeList.add(crv.getC2());
                     addedChromosomes++;
                 }else{
-                    System.out.println("CROSSOVER ERROR");
+                    //System.out.println("CROSSOVER ERROR");
                 }
 
             }
@@ -325,7 +326,7 @@ public class Tier_1 {
                 newChromosomeList.add(t.getChromosome());
                 addedChromosomes++;
             }else if (!t.getChromosome().isValid(C)){
-                System.out.println("TIMESLOT ERROR");
+                //System.out.println("TIMESLOT ERROR");
             }
         }
 
@@ -358,10 +359,28 @@ public class Tier_1 {
 
     }
 
+    private void checkPop(){
+        ArrayList<Integer> wrongChromosomes = new ArrayList<>();
+        Integer i = 0;
+        for(Chromosome c : population.getPopulationList()){
+            if(!c.isValid(C)){
+                wrongChromosomes.add(i);
+            }
+            i++;
+        }
+        for(Integer c : wrongChromosomes){
+            population.removeChromosome(c);
+        }
+    }
+
     //Set current population best chromosome
     public void setBest(){
         //SORT BASED ON OBJ FUNCTION
         this.population.sortPopulationObjFunction();
+        //check that the chromosome is actually valid
+        while(!this.population.getChromosome(0).isValid(C)){
+            checkPop();
+        }
 
         if(previousIterationBestChromosome == null || previousIterationBestChromosome.getObjFunc() > this.population.getChromosome(0).getObjFunc()){
             //obj function has improved or we are on the 1st cycle
