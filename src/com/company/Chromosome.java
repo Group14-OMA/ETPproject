@@ -31,6 +31,20 @@ public class Chromosome {
         this.geneList = geneList;
     }
 
+    public Boolean isValid(Integer C[][]){
+        Integer conflicts = 0;
+        for(int i = 0; i < tmax; i++) {
+            for (Integer exam1 : geneList[i]) {
+                for (Integer exam2 : geneList[i]) {
+                    if (exam1 != exam2 && C[exam1][exam2] != 0) {
+                        conflicts++;
+                    }
+                }
+            }
+        }
+        return conflicts == 0;
+    }
+
     public Double getObjFunc() {
         return objFunc;
     }
