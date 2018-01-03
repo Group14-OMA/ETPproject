@@ -101,6 +101,7 @@ public class Main {
                 waitingForPop = false;
             }else if(annealing.getPopGenerated()){
                 p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), annealing.getChromosomesPop());
+                waitingForPop = false;
             }
         }
 
