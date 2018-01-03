@@ -57,6 +57,7 @@ public class Main {
             System.exit(1);
         }
 
+        System.out.println("Reading file and elaborating...");
         inputProject=new Input(args[0]);
         inputProject.startInput();                          //Getting input from file
         //TEST
@@ -64,43 +65,11 @@ public class Main {
         //annealing.run();
         //System.exit(0);
         //END TEST
-        //Test dell'input
-        /*
-        System.out.println("This is the input for the instance " + inputProject.getInstanceName());
-        System.out.println("The number of exams is: " + inputProject.getExamNumber().toString());
-        System.out.println("The number of students is " + inputProject.getStudentNumber().toString());
-        System.out.println("The number of timeslots is " + inputProject.getTimeslots().toString());
 
-        System.out.println("The conflict matrix is: ");
-        Integer [][] cmatrix=inputProject.getConflictMatrix();
-        for(Integer[] row:cmatrix) {
-            System.out.println(Arrays.toString(row));
-        }
-        */
-
-        //TestClass.chromosomesTest();
         Integer[] exams = new Integer[inputProject.getExamNumber()];
         for(int i=0; i<exams.length;i++) exams[i]=i;
-        /*
-<<<<<<< HEAD
-        for(int i=0; i<exams.length;i++) exams[i]=i+1;
 
-=======
-        for(int i=0; i<exams.length;i++) exams[i]=i+1;
-
-        //TEST
-        Annealing annealing = new Annealing(inputProject.getConflictMatrix(), 5, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
-        annealing.run();
-        System.exit(0);
-        //END TEST
-
->>>>>>> 6925701dcee1208d52094d423ca60f8f607489c8*/
-        //Generating first population
-        //PopulationGenerator Pop = new PopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());
-        //Pop.conflictList();
-        //Pop.printConflictList();
-        //Pop.buildOptimizedConflictMatrix();
-        //Pop.printOptimizedConflictMatrix();
+        System.out.println("Generating an initial population...");
         sortedPopulationGenerator sortedPop = new sortedPopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber(), 500);
         sortedPop.generatePop();
 
@@ -108,6 +77,7 @@ public class Main {
         Population p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), sortedPop.getPopulation());
 
         //Generating and Starting tier 1
+        System.out.println("Finding best solution...");
         tier_1 = new Tier_1(p, inputProject.getConflictMatrix(),args[0]);
         tier_1.first_tier();
 

@@ -1,6 +1,7 @@
 package com.company;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 public class Chromosome {
 
@@ -31,20 +32,6 @@ public class Chromosome {
         this.geneList = geneList;
     }
 
-    public Boolean isValid(Integer C[][]){
-        Integer conflicts = 0;
-        for(int i = 0; i < tmax; i++) {
-            for (Integer exam1 : geneList[i]) {
-                for (Integer exam2 : geneList[i]) {
-                    if (exam1 != exam2 && C[exam1][exam2] != 0) {
-                        conflicts++;
-                    }
-                }
-            }
-        }
-        return conflicts == 0;
-    }
-
     public Double getObjFunc() {
         return objFunc;
     }
@@ -54,7 +41,12 @@ public class Chromosome {
     }
 
     public Integer[] getTimeSlotList() {
-        return timeSlotList;
+        Integer[] tmp=new Integer[examNum];
+        for(int x=0; x<examNum;x++) {
+            tmp[x]=timeSlotList[x];
+        }
+        return tmp;
+
     }
 
     public void setTimeSlotList(Integer[] timeSlotList) {
@@ -62,7 +54,12 @@ public class Chromosome {
     }
 
     public ArrayList<Integer>[] getGeneList() {
-        return geneList;
+        ArrayList<Integer>[] output=new ArrayList[tmax];
+        for(int x=0; x<tmax ; x++) {
+            output[x] = new ArrayList<Integer>(geneList[x]);
+        }
+        return output;
+
     }
 
     public void setGeneList(ArrayList<Integer>[] geneList) {
@@ -99,13 +96,15 @@ public class Chromosome {
         Integer oldTimeslot = timeSlotList[exam];
         timeSlotList[exam] = newTimeslot;
 
-        geneList[oldTimeslot].remove(exam);
+        geneList[oldTimeslot].stream().filter(integer -> !integer.equals(exam))
+                .collect(Collectors.toCollection(ArrayList::new));
         geneList[newTimeslot].add(exam);
 
     }
 
     public ArrayList<Integer> getGene(Integer i){
-        return geneList[i];
+        ArrayList<Integer> tmp=new ArrayList<>(geneList[i]);
+        return tmp;
     }
 
     public void updateObjectiveFunction(Integer C[][]){
@@ -114,8 +113,6 @@ public class Chromosome {
         for(Integer i = 0; i < this.tmax; i++) {
             ArrayList<Integer> exams = this.getGene(i);
             for (Integer exam : exams) {
-                //make sure that timeslotList is correct
-                timeSlotList[exam] = i;
                 for (Integer j = i + 1; j < i + 6 && j < tmax; j++) {
                     if (this.getGene(j) != null) {
                         for (Integer exam2 : this.getGene(j)) {
