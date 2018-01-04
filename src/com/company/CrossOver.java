@@ -37,13 +37,12 @@ public class CrossOver implements Runnable{
 							valid = false;
 							l1[i] = (l1[i]+1)%this.c1.getTmax();
 							counter++;
-
 						}
 					}
 				}
 
 			}
-			if(counter >= 12) break;
+			if(counter >= c1.getExamNum()-1) break;
 		}
 		
 		//Possible infinite loop, probably need to check for a limited number of iterations
@@ -59,13 +58,13 @@ public class CrossOver implements Runnable{
 							valid = false;
 							l2[i] = (l2[i]+1)%this.c2.getTmax();
 							counter++;
-							if(counter >= 12) break;
+							//if(counter >= 12) break;
 						}
 					}
 				}
 
 			}
-			if(counter >= 12) break;
+			if(counter >= c2.getExamNum()-1) break;
 		}
 		
 		if(valid) {
