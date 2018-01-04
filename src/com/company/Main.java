@@ -9,7 +9,11 @@ import java.util.concurrent.TimeUnit;
 
 public class Main {
 
+    private static Boolean timerFinished = false;
     private static Tier_1 tier_1;
+    private static Annealing2 annealing;
+    private static ExecutorService executorService;
+    private static Integer phase = 0; //0-->input, 1-->pop generation, 2-->tier1
 
 
 
@@ -41,7 +45,14 @@ public class Main {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    tier_1.stopLoop();
+                    System.out.println("Timer finished, asking threads to shutdown...");
+                    timerFinished = true;
+                    if(phase == 1) {
+                        annealing.endAnnealing();
+                        executorService.shutdownNow();
+                    }else if(phase == 2) {
+                        tier_1.stopLoop();
+                    }
                 }
             }, time);
 
@@ -72,46 +83,51 @@ public class Main {
         Integer[] exams = new Integer[inputProject.getExamNumber()];
         for(int i=0; i<exams.length;i++) exams[i]=i;
 
-        System.out.println("Generating an initial population...");
-
-        ExecutorService executorService = Executors.newCachedThreadPool();
         Population p = null;
-        sortedPopulationGenerator sortedPop = new sortedPopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber(), 500);
-        Annealing2 annealing = new Annealing2(inputProject.getConflictMatrix(),500, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
-        executorService.submit(sortedPop);
-        executorService.submit(annealing);
+        if(!timerFinished) {
+            System.out.println("Generating an initial population...");
+            phase = 1;
 
-        executorService.shutdown();
+            executorService = Executors.newCachedThreadPool();
+            sortedPopulationGenerator sortedPop = new sortedPopulationGenerator(exams, inputProject.getTimeslots(), inputProject.getConflictMatrix(), inputProject.getStudentNumber(), 500);
+            annealing = new Annealing2(inputProject.getConflictMatrix(), 500, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
+            executorService.submit(sortedPop);
+            executorService.submit(annealing);
 
-        Boolean waitingForPop = true;
-        while (waitingForPop){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if(sortedPop.getSolFound()){
-                annealing.endAnnealing();
-                try{
-                    executorService.awaitTermination(10, TimeUnit.MINUTES);
-                }catch (InterruptedException i){
-                    System.out.println(i.getMessage());
+            executorService.shutdown();
+
+            Boolean waitingForPop = true;
+            while (waitingForPop) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
-                p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), sortedPop.getPopulation());
-                waitingForPop = false;
-            }else if(annealing.getPopGenerated()){
-                p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), annealing.getChromosomesPop());
-                waitingForPop = false;
+                if (sortedPop.getSolFound()) {
+                    annealing.endAnnealing();
+                    try {
+                        executorService.awaitTermination(10, TimeUnit.MINUTES);
+                    } catch (InterruptedException i) {
+                        System.out.println(i.getMessage());
+                    }
+                    p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), sortedPop.getPopulation());
+                    waitingForPop = false;
+                } else if (annealing.getPopGenerated()) {
+                    p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), annealing.getChromosomesPop());
+                    waitingForPop = false;
+                }
             }
         }
 
         //sortedPop.generatePop();
 
-
-        //Generating and Starting tier 1
-        System.out.println("Finding best solution...");
-        tier_1 = new Tier_1(p, inputProject.getConflictMatrix(),args[0]);
-        tier_1.first_tier();
+        if(!timerFinished) {
+            //Generating and Starting tier 1
+            System.out.println("Finding best solution...");
+            phase = 2;
+            tier_1 = new Tier_1(p, inputProject.getConflictMatrix(), args[0]);
+            tier_1.first_tier();
+        }
 
         System.exit(0);
     }
