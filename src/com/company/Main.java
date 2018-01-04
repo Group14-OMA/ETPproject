@@ -105,11 +105,11 @@ public class Main {
         sortedPop.generatePop();
 
         //Creating population Class
-        Population p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), sortedPop.getPopulation());
+        //Population p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), sortedPop.getPopulation());
 
         //Generating and Starting tier 1
-        tier_1 = new Tier_1(p, inputProject.getConflictMatrix(),args[0]);
-        tier_1.first_tier();
+        //tier_1 = new Tier_1(p, inputProject.getConflictMatrix(),args[0]);
+        //tier_1.first_tier();
 
         System.exit(0);
     }

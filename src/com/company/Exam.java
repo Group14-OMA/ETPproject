@@ -6,6 +6,12 @@ public class Exam {
 	private int numConlict;
 	private int subset;
 	private int index;
+	private int timeslot=-1;
+	private int position=-1;
+	
+
+	
+
 	private boolean placed;
 	
 	
@@ -45,5 +51,20 @@ public class Exam {
 	public void setSubset(int subset) {
 		this.subset = subset;
 	}
+	
+	public int getTimeslot() {
+		return timeslot;
+	}
 
+	public void setTimeslot(int timeslot) {
+		this.timeslot = timeslot;
+	}
+
+	public int getPosition() {
+		return position;
+	}
+
+	public void setPosition(int position) {
+		this.position = position;
+	}
 }

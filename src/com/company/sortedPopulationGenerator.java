@@ -43,7 +43,8 @@ public class sortedPopulationGenerator {
     	//printSubsets();
     	sortExamArray();
     	//printSubsets();
-    	sortedGenerator(); //ALSO GENERATE THE POPULATION. POPULATION SIZE DEFINED BY populationSize
+    	sortedGenerator();
+    	//sortedGeneratorAlternative(); // we need to check if it produces better results
     	//printFastConflictMatrix();
     	//fastGenerator();
         //chromosomeGenerator();
@@ -76,6 +77,13 @@ public class sortedPopulationGenerator {
     	for(int i=0;i<exams.length;i++) {
     		examArray[i]=new Exam(i);
     	}
+    }
+    
+    public void printExamArray() {
+    	for(Exam e: examArray) {
+    		System.out.println(e.getPosition() + " " + e.getIndex() + " ");
+    	}
+    	return;
     }
     
     public void identifySubset() {
@@ -135,10 +143,33 @@ public class sortedPopulationGenerator {
     			}
     		}	    		
     	}
+    	for(int i=0;i<examArray.length;i++) {
+    		examArray[i].setPosition(i);
+    	}
     	return;
     }
     //place exams in order from the most to least conflicting
     //cannot place 48
+    
+    public void swap(){
+    	Exam tmp;
+    	int index1=0;
+    	int index2=0;
+    	int range=10;
+    	while(index1==index2) {
+    		index1=(int)(Math.random()*range);
+    		index2=(int)(Math.random()*range);
+    	}
+    	tmp = examArray[index1];
+    	examArray[index1]=examArray[index2];
+    	examArray[index1].setPosition(index1);
+    	examArray[index2]=tmp;
+    	examArray[index2].setPosition(index2);
+    	System.out.print("swapped " + index1 + " with " + index2 + "   " );
+    	System.out.println();
+    	return;	
+    }
+    
     public void sortedGenerator() {
     	boolean explored=false;
     	Integer[] chromosome = new Integer[exams.length];
@@ -150,6 +181,7 @@ public class sortedPopulationGenerator {
     				if(!fastCheckConflict(e.getIndex(),myTimeslot)) {
     					explored=true;
     					e.setPlaced(true);
+    					e.setTimeslot(myTimeslot);
     					chromosome[e.getIndex()]=myTimeslot;
     					fillFastConflictMatrix(e.getIndex(),myTimeslot);
     				}    				
@@ -157,7 +189,7 @@ public class sortedPopulationGenerator {
     				//leave the section below commented out , im working on it 16/12/17
     				
     				if(myTimeslot==(timeslot-1) && !explored) {
-    					if(!outOfMyWay(e.getIndex(),chromosome,e)) {
+    					if(!outOfMyWay(chromosome,e)) {
     						System.out.println("FAIL on exam: " + (e.getIndex()+1));
     						//printFastConflictMatrix();
     						return;   					
@@ -182,12 +214,102 @@ public class sortedPopulationGenerator {
     			System.out.println("unable to place: " + (i+1));	
     		}
     	}
+	    	
     	
     	//generateSortedPopulation(chromosome);
 		generatePopulation(chromosome);
 		//create a population
     	   	
     }
+    
+    public void sortedGeneratorAlternative() {
+    	boolean explored=false;
+    	Integer[] chromosome = new Integer[exams.length];
+    	for(int i=0;i<exams.length;i++) chromosome[i] = -1;
+    	//printExamArray();
+    	//swap(); //swap 2 exams in the first 10 exams
+    	//printExamArray();
+    	//GENERATE 10 CHROMOSOMES 
+    	// 
+    	for(int populationSize2=0; populationSize2<10; populationSize2++) {
+    		System.out.println("------ " + populationSize2 + "----------");
+    		//perform 3 swaps , to increase randomness 
+    		swap();
+    		swap();
+    		swap();
+	    	for(Exam e: examArray) {
+	    		if(!e.isPlaced()) {
+	    			//for(int myTimeslot=0; myTimeslot<timeslot;myTimeslot++) {
+	    			for(int myTimeslot=0; myTimeslot<timeslot; myTimeslot++) {
+	    				if(!fastCheckConflict(e.getIndex(),myTimeslot)) {
+	    					explored=true;
+	    					e.setPlaced(true);
+	    					e.setTimeslot(myTimeslot);
+	    					chromosome[e.getIndex()]=myTimeslot;
+	    					fillFastConflictMatrix(e.getIndex(),myTimeslot);
+	    				}    				
+	    				if(explored) break;
+	    				//leave the section below commented out , im working on it 16/12/17
+	    				
+	    				if(myTimeslot==(timeslot-1) && !explored) {
+	    					if(!outOfMyWay(chromosome,e)) {
+	    						System.out.println("FAIL on exam: " + (e.getIndex()+1));
+	    						//printFastConflictMatrix();
+	    						return;   					
+	    					}
+	    				
+	    				} 			
+	    			}
+	    		}
+	    		explored=false;
+	    		if(!myChecker(chromosome)) return;
+	    	}
+	    	//prints the cromosome in the format (exam - timeslot) so i can test it
+	    	//System.out.println("first chromosome:"); 
+	    	for(int i=0;i<chromosome.length;i++) {
+	    		//System.out.println((i+1)+" " + (chromosome[i]+1) + " subset: " + subsetColor[i]);
+	    		System.out.println( (i+1) +" " + ((chromosome[i])+1));
+	    	}
+	    	
+	    	//if an exam has timeslot equal to -1 that means it has not been placed
+	    	for(int i=0;i<chromosome.length;i++) {
+	    		if (chromosome[i]==-1) {
+	    			System.out.println("unable to place: " + (i+1));	
+	    		}
+	    	}
+	    	
+	    	/*
+	    	 * while sortedGenerator produces only 1 chromosome in sortedGeneratorAlternative you can set the number of chromosome to produce (hardcoding populationSize2) 
+	    	 * THERE'RE 2 WAYS TO GENERATE A POPULATION:
+	    	 * 1) Using sortedGeneratorAlternative with generateSinglePop:
+	    	 * 			generate a population of size = populationSize2 (Hardcoded at the moment)
+	    	 * 2) Using sortedGeneratorAlternative with generatePop:
+	    	 * 			generate a population of size = populationSize2*populationSize 
+	    	 * 			works like the normal sortedGenerator but generate a population for each chromosome produced by sortedGeneratorAlternative
+	    	 * 	 
+	    	 */
+	    	
+	    	generatePopulation(chromosome); //generates an entire population from a single chromosome 
+	    	//generateSinglePop(chromosome); //adds a single chromosome to the population
+	    	clean(chromosome); //clean both examArray and chromosome
+	    	
+    	}
+    	
+    	//generateSortedPopulation(chromosome);
+		//generatePopulation(chromosome);
+		//create a population
+    	   	
+    }
+    
+    public void clean(Integer[] chromosome) {
+    	//not optimized
+    	for(Exam e : examArray) {
+    		remove(e);
+    	}
+    	for(int i=0; i<chromosome.length;i++) chromosome[i]=-1;
+    	
+    }
+    
     //GENERATE POPULATION BY SHUFFLING THE GROUPS BETWEEN TIMESLOT, NOT VERY GOOD BUT IT WORKS
     public void generateSortedPopulation(Integer[] chromosome) {
     	System.out.println("-----------------------------------------------");
@@ -245,50 +367,54 @@ public class sortedPopulationGenerator {
     }
     //repetition in the argument , must be fixed
     //tutti i print e i vari checker sono solo per trouble shooting
-    public boolean outOfMyWay(int examIndex,Integer[] chromosome,Exam e) {
-    	/*
-    	int counter=0;
-    	
-    	for(int j=0;j<timeslot;j++) {
-    		counter+=fastConflictMatrix[examIndex][j];
-    		System.out.print("<"+fastConflictMatrix[examIndex][j]+">");
-    	}
-    	System.out.println("  number: " + counter);
-    	*/
+    public boolean outOfMyWay(Integer[] chromosome,Exam e) {
+    	int examIndex=e.getIndex();
+    	int numVisitedTimeslot=0; //number of timeslot visited by a cycle 
     	int numConflict; 
-    	for(numConflict=1;numConflict<exams.length;numConflict++) { //TRY TO MAKE SPACE IN THE TIMESLOTS WITH LESS CONFLICT
-    	//checkSum();
-	    	for(int myTimeslot=0;myTimeslot<this.timeslot;myTimeslot++) {
-	    		if(fastConflictMatrix[examIndex][myTimeslot]==numConflict) {
-			    	for(int i=0;i<chromosome.length;i++) {
-			    		if(chromosome[i]==myTimeslot && doesConflict(examIndex,i)) { // i is the index of the exam to move out of the way
-			    			moveExam(i,myTimeslot,chromosome);
-			    		}
-			    	}
-			    	//if (!secondChecker(chromosome)) {System.out.println("before placing");return false;}
-			    	if(!fastCheckConflict(examIndex,myTimeslot)) {
-			    		/*
-			    		checkSum();
-			    		System.out.println("myTimeslot=" + myTimeslot);
-			    		for(int j=0;j<timeslot;j++) {
-			        		counter+=fastConflictMatrix[examIndex][j];
-			        		System.out.print("<"+fastConflictMatrix[examIndex][j]+">");
-			        	}
-			        	System.out.println("  number: " + counter);
-			        	counter=0;
-			        	*/
-			    		fillFastConflictMatrix(examIndex,myTimeslot);
-			    		e.setPlaced(true);
-			    		chromosome[examIndex]=myTimeslot;	
-			    		
-			    		//if(!myChecker(chromosome)) {System.out.println("after placing");return false;}
-			    		
-			    		return true;
+    	//the number of times the algorithm cycles through the timeslots is hardcoded 
+    	for(int counter=0; counter<100;counter++){  
+    		numVisitedTimeslot=0;
+	    	for(numConflict=1;numConflict<exams.length;numConflict++) { //TRY TO MAKE SPACE IN THE TIMESLOTS WITH LESS CONFLICT
+	    	//checkSum();
+		    	for(int myTimeslot=0;myTimeslot<this.timeslot;myTimeslot++) {
+		    		if(fastConflictMatrix[examIndex][myTimeslot]==numConflict) {
+		    			numVisitedTimeslot++;
+				    	for(Exam myExam: this.examArray) {
+				    		if(myExam.getTimeslot()==myTimeslot && this.conflictMatrix[e.getIndex()][myExam.getIndex()]>0) { // i is the index of the exam to move out of the way
+				    			moveExam(myExam,myTimeslot);
+				    		}
+				    	}
+				    	if(!fastCheckConflict(examIndex,myTimeslot)) {
+				    		place(e,myTimeslot);	
+				    		for(Exam tempExam : examArray) {
+				    			chromosome[tempExam.getIndex()]=tempExam.getTimeslot();
+				    		}
+				    		return true;
+				    	}
 			    	}
 		    	}
+		    	if(numVisitedTimeslot==this.timeslot) break; //all the timeslots have been visited and a solution has not been found, break and try again 
 	    	}
     	}
-    	return false;
+    	
+    	
+    	return false; //out of my way wasn't able to free a timeslot
+    }
+    
+    public void place(Exam e , int myTimeslot) {
+    	int examIndex=e.getIndex();
+    	fillFastConflictMatrix(examIndex,myTimeslot);
+		e.setPlaced(true);
+		e.setTimeslot(myTimeslot);
+		//this.chromosome[examIndex]=myTimeslot;    	
+    	return;
+    }
+    
+    public void remove(Exam e) {
+    	removeFromFastConflictMatrix(e.getIndex(),e.getTimeslot());
+    	e.setPlaced(false);
+    	e.setTimeslot(-1);
+    	return;
     }
     //checkSum , troubleshooting related
     public void checkSum() {
@@ -309,15 +435,15 @@ public class sortedPopulationGenerator {
     	return false;
     	
     }
-    public void moveExam(int examIndex,int oldTimeslot,Integer[] chromosome) {
+    public void moveExam(Exam e,int oldTimeslot) {
     	boolean moved=false;
+    	int examIndex=e.getIndex();
     	for(int myTimeslot=0;myTimeslot<this.timeslot && moved==false ;myTimeslot++) {
     		if(myTimeslot!=oldTimeslot && !fastCheckConflict(examIndex,myTimeslot)) {
     			//fastConflictMatrix[examIndex][oldTimeslot]--;
-    			removeFromFastConflictMatrix(examIndex,oldTimeslot);
+    			remove(e);
     			//fastConflictMatrix[examIndex][myTimeslot]++;
-    			fillFastConflictMatrix(examIndex,myTimeslot);
-    			chromosome[examIndex]=myTimeslot;
+    			place(e,myTimeslot);
     			moved=true;
     		}
     	}    	    	
@@ -450,6 +576,24 @@ public class sortedPopulationGenerator {
 		}
 
 	}
+    
+    private void generateSinglePop(Integer[] examArray) {
+    			ArrayList<Integer>[] geneList = new ArrayList[timeslot];
+
+    			for(Integer i = 0; i < timeslot; i++){
+    				geneList[i] = new ArrayList<>();
+    			}
+
+    			for(int i=0;i<examArray.length;i++) {
+    				geneList[examArray[i]].add(i);
+    			}
+
+    			//Create the chromosome and add it to the population
+    			Chromosome newChromosome = new Chromosome(timeslot, examArray.length, studentNum, examArray, geneList);
+    			newChromosome.updateObjectiveFunction(conflictMatrix);
+    			population.add(newChromosome);
+    			return;
+    }
 
 	private Chromosome shuffleChromosome(ArrayList<Integer>[] geneList){
 		Random rnd = ThreadLocalRandom.current();
