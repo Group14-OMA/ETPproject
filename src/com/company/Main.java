@@ -1,12 +1,19 @@
 package com.company;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 //import test.PopulationGenerator;
 
 
 public class Main {
 
+    private static Boolean timerFinished = false;
     private static Tier_1 tier_1;
+    private static Annealing2 annealing;
+    private static ExecutorService executorService;
+    private static Integer phase = 0; //0-->input, 1-->pop generation, 2-->tier1
 
 
 
@@ -38,7 +45,14 @@ public class Main {
             timer.schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    tier_1.stopLoop();
+                    System.out.println("Timer finished, asking threads to shutdown...");
+                    timerFinished = true;
+                    if(phase == 1) {
+                        annealing.endAnnealing();
+                        executorService.shutdownNow();
+                    }else if(phase == 2) {
+                        tier_1.stopLoop();
+                    }
                 }
             }, time);
 
@@ -57,6 +71,7 @@ public class Main {
             System.exit(1);
         }
 
+        System.out.println("Reading file and elaborating...");
         inputProject=new Input(args[0]);
         inputProject.startInput();                          //Getting input from file
         //TEST
@@ -64,52 +79,55 @@ public class Main {
         //annealing.run();
         //System.exit(0);
         //END TEST
-        //Test dell'input
-        /*
-        System.out.println("This is the input for the instance " + inputProject.getInstanceName());
-        System.out.println("The number of exams is: " + inputProject.getExamNumber().toString());
-        System.out.println("The number of students is " + inputProject.getStudentNumber().toString());
-        System.out.println("The number of timeslots is " + inputProject.getTimeslots().toString());
 
-        System.out.println("The conflict matrix is: ");
-        Integer [][] cmatrix=inputProject.getConflictMatrix();
-        for(Integer[] row:cmatrix) {
-            System.out.println(Arrays.toString(row));
-        }
-        */
-
-        //TestClass.chromosomesTest();
         Integer[] exams = new Integer[inputProject.getExamNumber()];
         for(int i=0; i<exams.length;i++) exams[i]=i;
-        /*
-<<<<<<< HEAD
-        for(int i=0; i<exams.length;i++) exams[i]=i+1;
 
-=======
-        for(int i=0; i<exams.length;i++) exams[i]=i+1;
+        Population p = null;
+        if(!timerFinished) {
+            System.out.println("Generating an initial population...");
+            phase = 1;
 
-        //TEST
-        Annealing annealing = new Annealing(inputProject.getConflictMatrix(), 5, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
-        annealing.run();
-        System.exit(0);
-        //END TEST
+            executorService = Executors.newCachedThreadPool();
+            sortedPopulationGenerator sortedPop = new sortedPopulationGenerator(exams, inputProject.getTimeslots(), inputProject.getConflictMatrix(), inputProject.getStudentNumber(), 500);
+            annealing = new Annealing2(inputProject.getConflictMatrix(), 500, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
+            executorService.submit(sortedPop);
+            executorService.submit(annealing);
 
->>>>>>> 6925701dcee1208d52094d423ca60f8f607489c8*/
-        //Generating first population
-        //PopulationGenerator Pop = new PopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber());
-        //Pop.conflictList();
-        //Pop.printConflictList();
-        //Pop.buildOptimizedConflictMatrix();
-        //Pop.printOptimizedConflictMatrix();
-        sortedPopulationGenerator sortedPop = new sortedPopulationGenerator(exams,inputProject.getTimeslots(),inputProject.getConflictMatrix(),inputProject.getStudentNumber(), 500);
-        sortedPop.generatePop();
+            executorService.shutdown();
 
-        //Creating population Class
-        //Population p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), sortedPop.getPopulation());
+            Boolean waitingForPop = true;
+            while (waitingForPop) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                if (sortedPop.getSolFound()) {
+                    annealing.endAnnealing();
+                    try {
+                        executorService.awaitTermination(10, TimeUnit.MINUTES);
+                    } catch (InterruptedException i) {
+                        System.out.println(i.getMessage());
+                    }
+                    p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), sortedPop.getPopulation());
+                    waitingForPop = false;
+                } else if (annealing.getPopGenerated()) {
+                    p = new Population(sortedPop.getStudentNum(), sortedPop.getConflictMatrix(), annealing.getChromosomesPop());
+                    waitingForPop = false;
+                }
+            }
+        }
 
-        //Generating and Starting tier 1
-        //tier_1 = new Tier_1(p, inputProject.getConflictMatrix(),args[0]);
-        //tier_1.first_tier();
+        //sortedPop.generatePop();
+
+        if(!timerFinished) {
+            //Generating and Starting tier 1
+            System.out.println("Finding best solution...");
+            phase = 2;
+            tier_1 = new Tier_1(p, inputProject.getConflictMatrix(), args[0]);
+            tier_1.first_tier();
+        }
 
         System.exit(0);
     }
@@ -123,7 +141,6 @@ class TimeTooLow extends Exception { }
 class InvalidArgumentNumber extends Exception { }
 
 class InsertTime extends Exception {}
-
 
 
 

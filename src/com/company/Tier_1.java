@@ -59,7 +59,7 @@ public class Tier_1 {
             //AS SOON AS ALL THREADS HAVE TERMINATED, WRITE TO FILE.
             //TODO Daghero's Output class
             if(chromosomeHasChanged) {
-                System.out.println("Updated: " + previousIterationBestChromosome.getObjFunc());
+                //System.out.println("Updated: " + population.getChromosome(0).getObjFunc());
                 output();
                 chromosomeHasChanged = false;
             }
@@ -67,14 +67,14 @@ public class Tier_1 {
             i++;
             //System.out.println(i);
         }
-        System.out.println("Done");
-        System.out.println("ObjFunc: " + previousIterationBestChromosome.getObjFunc());
+        System.out.println("Done, exiting...");
+        /*System.out.println("ObjFunc: " + previousIterationBestChromosome.getObjFunc());
         for (ArrayList<Integer> gene : previousIterationBestChromosome.getGeneList()) {
             System.out.println(gene);
-        }
-        for(int k = 0; k < previousIterationBestChromosome.getExamNum(); k++){
-            System.out.println((k+1) + " " + (previousIterationBestChromosome.getExamTimeslot(k) + 1));
-        }
+        }*/
+        //for(int k = 0; k < previousIterationBestChromosome.getExamNum(); k++){
+            //System.out.println((k+1) + " " + (previousIterationBestChromosome.getExamTimeslot(k) + 1));
+        //}
 
         //output();
 
@@ -249,7 +249,7 @@ public class Tier_1 {
 
         //DELETE THE SAME AMOUNT OF CHROMOSOMES AS THE AMOUNT THAT WILL BE ADDED
         //deleteChromosomes();
-        //deleteChromosomes2(mutationThreads.size() + (crossOverThreads.size() * 2) + timeSlotSwapThreads.size());
+        deleteChromosomes2(mutationThreads.size() + (crossOverThreads.size() * 2) + timeSlotSwapThreads.size());
 
 
         //WAIT FOR ALL THREADS TO COMPLETE
@@ -259,8 +259,6 @@ public class Tier_1 {
             System.out.println(i.getMessage());
         }
 
-        Integer addedChromosomes = 0;
-        ArrayList<Chromosome> newChromosomeList = new ArrayList<>();
 
         //ALL THREADS COMPLETED, IT CHECKS IF THERE ARE SOME DUPLICATE. IT ADDS NEW CHROMOSOMES ONLY IF THEY ARE UNIQUE
         for(Mutation m : mutationThreads){
@@ -271,12 +269,9 @@ public class Tier_1 {
                     break;
                 }
             }
-            if(canInsert && m.getChromosome().isValid(C)){
+            if(canInsert) {
                 //this.population.addChromosome(m.getChromosome());
-                newChromosomeList.add(m.getChromosome());
-                addedChromosomes++;
-            }else if (!m.getChromosome().isValid(C)){
-                System.out.println("MUTATION ERROR");
+                this.population.addChromosome(m.getChromosome());
             }
         }
 
@@ -290,23 +285,16 @@ public class Tier_1 {
                 } else if (c.getTimeSlotList().equals(crv.getC2().getTimeSlotList())){
                     canInsert = false;
                     break;
-                    }
-                }//end for
+                }
+            }//end for
+
             if(canInsert){
-                if(crv.getC1().isValid(C)) {
-                    //this.population.addChromosome(crv.getC1());
-                    newChromosomeList.add(crv.getC1());
-                    addedChromosomes++;
-                }else{
-                    System.out.println("CROSSOVER ERROR");
-                }
-                if(crv.getC2().isValid(C)) {
-                    //this.population.addChromosome(crv.getC2());
-                    newChromosomeList.add(crv.getC2());
-                    addedChromosomes++;
-                }else{
-                    System.out.println("CROSSOVER ERROR");
-                }
+                //this.population.addChromosome(crv.getC1());
+                this.population.addChromosome(crv.getC1());
+
+                //this.population.addChromosome(crv.getC2());
+                this.population.addChromosome(crv.getC2());
+
 
             }
         }//end for
@@ -320,19 +308,12 @@ public class Tier_1 {
                     break;
                 }
             }
-            if(canInsert && t.getChromosome().isValid(C)){
+            if(canInsert){
                 //this.population.addChromosome(t.getChromosome());
-                newChromosomeList.add(t.getChromosome());
-                addedChromosomes++;
-            }else if (!t.getChromosome().isValid(C)){
-                System.out.println("TIMESLOT ERROR");
+                this.population.addChromosome(t.getChromosome());
             }
         }
 
-        deleteChromosomes2(addedChromosomes);
-        for(Chromosome c : newChromosomeList){
-            this.population.addChromosome(c);
-        }
 
     }// END RUNNING_THREAD
 
@@ -358,10 +339,12 @@ public class Tier_1 {
 
     }
 
+
     //Set current population best chromosome
     public void setBest(){
         //SORT BASED ON OBJ FUNCTION
         this.population.sortPopulationObjFunction();
+
 
         if(previousIterationBestChromosome == null || previousIterationBestChromosome.getObjFunc() > this.population.getChromosome(0).getObjFunc()){
             //obj function has improved or we are on the 1st cycle

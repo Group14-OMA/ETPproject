@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class sortedPopulationGenerator {
+public class sortedPopulationGenerator implements Runnable{
 	private int counter=0; //testing
     private Integer[] exams;
     private Integer timeslot;
@@ -13,6 +13,9 @@ public class sortedPopulationGenerator {
     private Integer[] subsetsDimensions;
     private Integer studentNum;
     private ArrayList<Integer>[] conflictList;
+
+	private Boolean solFound = false;
+	private Boolean popGenerated = false;
 
 
     private Integer[][] conflictMatrix;
@@ -27,7 +30,10 @@ public class sortedPopulationGenerator {
     private Integer populationSize;
 
 
-    
+	@Override
+	public void run() {
+		generatePop();
+	}
 
 
     public void generatePop(){
@@ -56,9 +62,14 @@ public class sortedPopulationGenerator {
       
     }
 
-    
-    
-    public sortedPopulationGenerator(Integer[] exams, Integer timeslot, Integer[][] conflictMatrix, Integer studentNum, Integer populationSize) {
+	public Boolean getPopGenerated() {
+		return popGenerated;
+	}
+
+
+
+
+	public sortedPopulationGenerator(Integer[] exams, Integer timeslot, Integer[][] conflictMatrix, Integer studentNum, Integer populationSize) {
         this.timeslot = timeslot;
         this.exams = exams;
         this.studentNum = studentNum;
@@ -203,21 +214,24 @@ public class sortedPopulationGenerator {
     	}
     	//prints the cromosome in the format (exam - timeslot) so i can test it
     	//System.out.println("first chromosome:"); 
-    	for(int i=0;i<chromosome.length;i++) {
+    	/*for(int i=0;i<chromosome.length;i++) {
     		//System.out.println((i+1)+" " + (chromosome[i]+1) + " subset: " + subsetColor[i]);
     		System.out.println( (i+1) +" " + ((chromosome[i])+1));
-    	}
+    	}*/
     	
     	//if an exam has timeslot equal to -1 that means it has not been placed
     	for(int i=0;i<chromosome.length;i++) {
     		if (chromosome[i]==-1) {
-    			System.out.println("unable to place: " + (i+1));	
+    			System.out.println("unable to place: " + (i+1));
+    			return;
     		}
     	}
 	    	
     	
     	//generateSortedPopulation(chromosome);
+		solFound = true;
 		generatePopulation(chromosome);
+		popGenerated = true;
 		//create a population
     	   	
     }
@@ -567,10 +581,10 @@ public class sortedPopulationGenerator {
 			shuffledChromosome = shuffleChromosome(geneList);
 			shuffledChromosome.updateObjectiveFunction(conflictMatrix);
 
-			for(int j=0;j<shuffledChromosome.getTimeSlotList().length;j++) {
+			/*for(int j=0;j<shuffledChromosome.getTimeSlotList().length;j++) {
 				//System.out.println((i+1)+" " + (chromosome[i]+1) + " subset: " + subsetColor[i]);
 				System.out.println( (j+1) +" " + ((shuffledChromosome.getTimeSlotList()[j])+1));
-			}
+			}*/
 
 			population.add(shuffledChromosome);
 		}
@@ -842,10 +856,11 @@ public class sortedPopulationGenerator {
 	        ar[i] = a;
 	    }
 	}
-    	
 
+	public Boolean getSolFound() {
+		return solFound;
+	}
 
-   
 
 }
 

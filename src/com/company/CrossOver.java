@@ -103,7 +103,7 @@ public class CrossOver implements Runnable{
 
 
 		//FIRST CHROMOSOME
-		this.c1 = new Chromosome(c1.getTmax(), c1.getExamNum(), c1.getStudentNum(), c1.getTimeSlotList(), c1.getGeneList());
+		this.c1 = new Chromosome(c1.getTmax(), c1.getExamNum(), c1.getStudentNum(), c1.getTimeSlotList(), new ArrayList[c1.getTmax()]);
 		this.c1.setFitness(c1.getFitness());
 		ArrayList<Integer>[] geneList1 = new ArrayList[c1.getGeneList().length];
 		for(int i = 0; i < c1.getGeneList().length; i++){
