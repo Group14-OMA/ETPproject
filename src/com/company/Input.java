@@ -1,11 +1,10 @@
 package com.company;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
-
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 
 public class Input {
@@ -17,6 +16,8 @@ public class Input {
     private Integer studentNumber;
     private Integer examNumber;
     private Integer [] [] conflictMatrix;
+
+    private ExecutorService executorService;
 
    
 
@@ -31,7 +32,8 @@ public class Input {
 
     public void startInput() {
         TimeSlotsReader(instanceName+".slo");
-        ExamReader(instanceName+".exm");
+
+        RandomExamReader(instanceName + ".exm");
         conflictMatrix =new Integer[examNumber][examNumber];
         StudentReader(instanceName + ".stu");
     }
@@ -67,27 +69,49 @@ public class Input {
     }
 
 
-
-    private void ExamReader(String file) {
-        String line;
-        Integer linecount = 0;
-
+    private void RandomExamReader(String fileName) {
+        File file=new File(fileName);
+        StringBuilder builder=new StringBuilder();
         try {
-            FileReader filereader = new FileReader(file);
-            BufferedReader bufferedreader = new BufferedReader(filereader);
+            RandomAccessFile randomAccessFile=new RandomAccessFile(file, "r");
+            long fileLength=file.length()-1;
+            boolean found=false;
+            while(!found) {
+                for (long pointer = fileLength; pointer >= 0; pointer--) {
+                    randomAccessFile.seek(pointer);
+                    char c;
+                    // read from the last one char at the time
+                    c = (char) randomAccessFile.read();
+                    if (c == '\n') {
+                        //builder.reverse();
+                        if (!builder.toString().equals(""))
 
-            while ((line = bufferedreader.readLine()) != null) {
-                if(line.matches("^[0-9]+\\s[0-9]+"))
-                linecount++;
+                            break;
+                    }
+                    if ((c != '\r') && (c != '\n'))
+                        builder.append(c);
+                }
+                String reversed=builder.reverse().toString();
+                if (reversed.matches("^[0-9]+\\s[0-9]+")) {
+                    found = true;
+                    String[] parts=reversed.split(" ");
+                    examNumber=Integer.valueOf(parts[0]);
+
+                }
+                else {
+                    builder.setLength(0); //clear the builder
+                }
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        examNumber=linecount;
 
+
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        } catch(IOException ioe) {
+            ioe.printStackTrace();
+        }
     }
+
+
 
 
     private void StudentReader(String file) {
@@ -124,24 +148,8 @@ public class Input {
 
                 }
 
-                for(int i = 0; i< examNumber; i++) {
-                    for (int j = 0; j< examNumber; j++) {
-
-                        if(i==j) conflictMatrix[i][j]=0;
-
-
-                        else {
-                            //questo set è una copia del primo
-                        Set<String> collisions=new HashSet<> (studentXExam[i]);
-                        collisions.retainAll(studentXExam[j]); // mantiene solo gli elementi che ci sono in entrambe
-
-                        conflictMatrix[i][j]=collisions.size();
-
-                        }
-
-                    }
-                }
-
+            //Costruisco la matrice
+            matrixBuild(studentXExam);
 
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
@@ -150,6 +158,32 @@ public class Input {
             }
 
         }
+
+    private void matrixBuild(LinkedList<String>[] studentXExam) {
+
+
+        executorService = Executors.newCachedThreadPool();
+
+        //Passo a ogni thread una row della matrice, vengono modificate per reference, quindi non devo salvare nulla
+        for(int y=0;y<examNumber;y++) {
+            ParallelMatrixBuilder pm= new ParallelMatrixBuilder(y,studentXExam.clone(),conflictMatrix[y]);
+
+            executorService.submit(pm);
+
+
+
+        }
+        executorService.shutdown();
+
+        try{
+            executorService.awaitTermination(10, TimeUnit.MINUTES);
+        }catch (InterruptedException i){
+            System.out.println(i.getMessage());
+        }
+
+    }
+
+
 
 
     public String getInstanceName() {
