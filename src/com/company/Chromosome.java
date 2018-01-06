@@ -64,6 +64,7 @@ public class Chromosome {
 
     public void setGeneList(ArrayList<Integer>[] geneList) {
         this.geneList = geneList;
+
     }
 
     public Integer getTmax() {
@@ -102,6 +103,7 @@ public class Chromosome {
 
     }
 
+
     public ArrayList<Integer> getGene(Integer i){
         ArrayList<Integer> tmp=new ArrayList<>(geneList[i]);
         return tmp;
@@ -124,6 +126,20 @@ public class Chromosome {
         }
 
         this.objFunc = value/this.studentNum;
+    }
+
+    public Boolean isValid(Integer C[][]){
+        Integer conflicts = 0;
+        for(int i = 0; i < tmax; i++) {
+            for (Integer exam1 : geneList[i]) {
+                for (Integer exam2 : geneList[i]) {
+                    if (exam1 != exam2 && C[exam1][exam2] != 0) {
+                        conflicts++;
+                    }
+                }
+            }
+        }
+        return conflicts == 0;
     }
 
 }

@@ -89,8 +89,8 @@ public class Main {
             phase = 1;
 
             executorService = Executors.newCachedThreadPool();
-            sortedPopulationGenerator sortedPop = new sortedPopulationGenerator(exams, inputProject.getTimeslots(), inputProject.getConflictMatrix(), inputProject.getStudentNumber(), 500);
-            annealing = new Annealing2(inputProject.getConflictMatrix(), 500, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
+            sortedPopulationGenerator sortedPop = new sortedPopulationGenerator(exams, inputProject.getTimeslots(), inputProject.getConflictMatrix(), inputProject.getStudentNumber(), 200);
+            annealing = new Annealing2(inputProject.getConflictMatrix(), 200, inputProject.getTimeslots(), inputProject.getStudentNumber(), inputProject.getExamNumber());
             executorService.submit(sortedPop);
             executorService.submit(annealing);
 

@@ -586,6 +586,7 @@ public class sortedPopulationGenerator implements Runnable{
 				System.out.println( (j+1) +" " + ((shuffledChromosome.getTimeSlotList()[j])+1));
 			}*/
 
+
 			population.add(shuffledChromosome);
 		}
 

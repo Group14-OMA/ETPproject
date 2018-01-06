@@ -289,10 +289,9 @@ public class Tier_1 {
             }//end for
 
             if(canInsert){
-                //this.population.addChromosome(crv.getC1());
+
                 this.population.addChromosome(crv.getC1());
 
-                //this.population.addChromosome(crv.getC2());
                 this.population.addChromosome(crv.getC2());
 
 
@@ -309,7 +308,6 @@ public class Tier_1 {
                 }
             }
             if(canInsert){
-                //this.population.addChromosome(t.getChromosome());
                 this.population.addChromosome(t.getChromosome());
             }
         }
@@ -319,24 +317,45 @@ public class Tier_1 {
 
     //AKA Daghero's Output function!!
     private void output() {
+        Integer i = 0;
         Chromosome bestOne=population.getChromosome(0);
-        Integer[] timeslotList=bestOne.getTimeSlotList();
-        PrintWriter pw = null;
+        while (!bestOne.isValid(C) && i < population.getPopulationList().size() - 1){
+            i++;
+            bestOne = population.getChromosome(i);
+        }
+        //Integer[] timeslotList=bestOne.getTimeSlotList();
+        //guaranteeing that only valid solutions are printed
+        if(i < population.getPopulationList().size()) {
+            Integer[] timeslotList = createTimeslotList(bestOne.getGeneList(), bestOne.getExamNum(), bestOne.getTmax());
+            PrintWriter pw = null;
 
 
-        try {
+            try {
 
-            pw=new PrintWriter(fileName);
-            for (int a=0; a < timeslotList.length; a++) {
-                pw.println( (a+1) + " " + (timeslotList[a] + 1));
+                pw = new PrintWriter(fileName);
+                for (int a = 0; a < timeslotList.length; a++) {
+                    pw.println((a + 1) + " " + (timeslotList[a] + 1));
+                }
+                pw.flush();
+                pw.close();
+
+            } catch (FileNotFoundException fnf) {
+                fnf.printStackTrace();
             }
-            pw.flush();
-            pw.close();
-
-        } catch (FileNotFoundException fnf) {
-            fnf.printStackTrace();
         }
 
+    }
+
+    private Integer[] createTimeslotList(ArrayList<Integer>[] geneList, Integer examNum, Integer tmax){
+        Integer[] timeslotList = new Integer[examNum];
+
+        for(Integer i = 0 ; i < tmax; i++){
+            for(Integer exam : geneList[i]){
+                timeslotList[exam] = i;
+            }
+        }
+
+        return timeslotList;
     }
 
 
