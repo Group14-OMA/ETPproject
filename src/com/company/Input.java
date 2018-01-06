@@ -161,13 +161,13 @@ public class Input {
 
     private void matrixBuild(LinkedList<String>[] studentXExam) {
 
-
+       ArrayList< ParallelMatrixBuilder> pmthreds=new ArrayList<>();
         executorService = Executors.newCachedThreadPool();
 
-        //Passo a ogni thread una row della matrice, vengono modificate per reference, quindi non devo salvare nulla
-        for(int y=0;y<examNumber;y++) {
-            ParallelMatrixBuilder pm= new ParallelMatrixBuilder(y,studentXExam.clone(),conflictMatrix[y]);
 
+        for(int y=0;y<examNumber;y++) {
+            ParallelMatrixBuilder pm= new ParallelMatrixBuilder(y,studentXExam.clone());
+            pmthreds.add(pm);
             executorService.submit(pm);
 
 
@@ -175,11 +175,19 @@ public class Input {
         }
         executorService.shutdown();
 
+
         try{
             executorService.awaitTermination(10, TimeUnit.MINUTES);
         }catch (InterruptedException i){
             System.out.println(i.getMessage());
         }
+
+
+        for(ParallelMatrixBuilder pl:pmthreds) {
+            conflictMatrix[pl.getIndiceEsame()]=pl.getRow();
+
+        }
+
 
     }
 
